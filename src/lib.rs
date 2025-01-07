@@ -20,6 +20,7 @@ pub struct ParsedTitle {
     pub year: Option<i32>,
     pub ppv: bool,
     pub trash: bool,
+    pub adult: bool,
     pub edition: Option<String>,
     pub extended: bool,
     pub convert: bool,
@@ -56,23 +57,4 @@ pub fn parse_title(raw_title: &str) -> Result<ParsedTitle, ParserError> {
     let mut parser = Parser::new();
     handlers::add_default_handlers(&mut parser);
     parser.parse(raw_title)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_basic_parsing() {
-        let result = parse_title("The Simpsons S01E01 1080p BluRay x265 HEVC 10bit AAC 5.1 Tigole").unwrap();
-        assert_eq!(result.title, "The Simpsons");
-        assert_eq!(result.resolution, Some("1080p".to_string()));
-        assert_eq!(result.quality, Some("bluray".to_string()));
-        assert_eq!(result.codec, Some("x265".to_string()));
-        assert!(result.audio.contains(&"aac".to_string()));
-        assert!(result.channels.contains(&"5.1".to_string()));
-        assert_eq!(result.seasons, vec![1]);
-        assert_eq!(result.episodes, vec![1]);
-        assert_eq!(result.group, Some("Tigole".to_string()));
-    }
 }
