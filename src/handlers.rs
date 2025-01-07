@@ -1,6 +1,11 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 
+use crate::{
+    handler_wrapper::{Handler, RegexHandlerOptions},
+    ParsedTitle,
+};
+
 lazy_static! {
     // Resolution patterns
     static ref RESOLUTION_PATTERN: Regex = Regex::new(r"(?i)\b(4k|2160p|1440p|1080p|720p|480p|360p|240p)\b").unwrap();
@@ -81,6 +86,19 @@ pub fn group_handler(title: &str) -> Option<(String, String)> {
 }
 
 pub fn add_default_handlers(parser: &mut super::Parser) {
+    // Adult
+    parser.add_handler(Handler::from_regex(
+        "adult",
+        |t| &mut t.adult,
+        Regex::new(r"\b(?:xxx|xx)\b").unwrap(),
+        None,
+        RegexHandlerOptions {
+            remove: true,
+            skip_from_title: true,
+            ..Default::default()
+        },
+    ));
+
     // parser.add_handler(resolution_handler);
     // parser.add_handler(quality_handler);
     // parser.add_handler(codec_handler);
