@@ -51,6 +51,7 @@ pub struct ParsedTitle {
     pub subbed: bool,
     pub documentary: bool,
     pub upscaled: bool,
+    pub extras: Vec<String>,
 }
 
 pub fn parse_title(raw_title: &str) -> Result<ParsedTitle, ParserError> {

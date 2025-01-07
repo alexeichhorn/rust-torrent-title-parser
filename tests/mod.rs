@@ -1,4 +1,17 @@
 mod test_adult;
+mod test_audio;
+mod test_codec;
+mod test_collection;
+mod test_container;
+mod test_convert;
+mod test_date;
+mod test_dubbed;
+mod test_edition;
+mod test_episode_code;
+mod test_extras;
+mod test_group;
+mod test_hardcoded;
+mod test_hdr;
 mod test_languages;
 mod test_main;
 mod test_special;
