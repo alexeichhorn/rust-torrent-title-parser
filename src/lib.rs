@@ -1,4 +1,3 @@
-use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 mod handler_wrapper;
@@ -13,7 +12,7 @@ pub enum ParserError {
     ParseError(String),
 }
 
-#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct ParsedTitle {
     pub title: String,
     pub resolution: Option<String>,
