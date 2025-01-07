@@ -1,27 +1,37 @@
+use crate::handler_wrapper::Handler;
+use crate::handler_wrapper::HandlerContext;
+use crate::handler_wrapper::Match;
 use crate::ParsedTitle;
 use crate::ParserError;
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::HashMap;
 
+const CURLY_BRACKETS: (&str, &str) = ("{", "}");
+const SQUARE_BRACKETS: (&str, &str) = ("[", "]");
+const PARENTHESES: (&str, &str) = ("(", ")");
+const BRACKETS: [(&str, &str); 3] = [CURLY_BRACKETS, SQUARE_BRACKETS, PARENTHESES];
+
 lazy_static! {
     static ref CLEAN_TITLE_REGEX: Regex = Regex::new(r"_+").unwrap();
-    static ref MOVIE_REGEX: Regex = Regex::new(r"(?i)[\[\(]movie[\]\)]").unwrap();
-    static ref RUSSIAN_CAST_REGEX: Regex = Regex::new(r"\([^)]*[\u0400-\u04ff][^)]*\)$|/.*\([^)]*\)$").unwrap();
+    static ref MOVIE_REGEX: Regex = Regex::new(r"[\[\(]movie[\)\]]").unwrap();
+    static ref RUSSIAN_CAST_REGEX: Regex = Regex::new(r"\([^)]*[\u0400-\u04ff][^)]*\)$|/[^/]*\([^)]*\)$").unwrap();
+    static ref ALT_TITLES_REGEX: Regex = Regex::new(r"[^/|(]*[{NON_ENGLISH_CHARS}][^/|]*[/|]|[/|][^/|(]*[{NON_ENGLISH_CHARS}][^/|]*").unwrap();
+    static ref NOT_ONLY_NON_ENGLISH_REGEX: Regex = Regex::new(r"[a-zA-Z][^{NON_ENGLISH_CHARS}]+[{NON_ENGLISH_CHARS}].*[{NON_ENGLISH_CHARS}]|[{NON_ENGLISH_CHARS}].*[{NON_ENGLISH_CHARS}][^{NON_ENGLISH_CHARS}]+[a-zA-Z]").unwrap();
+    static ref NOT_ALLOWED_SYMBOLS_AT_START_AND_END: Regex = Regex::new(r"^[^\w{NON_ENGLISH_CHARS}#\[【★]+|[ \-:/\\\[\|{(#$&^]+$").unwrap();
+    static ref REMAINING_NOT_ALLOWED_SYMBOLS_AT_START_AND_END: Regex = Regex::new(r"^[^\w{NON_ENGLISH_CHARS}#]+|]$").unwrap();
+    static ref REDUNDANT_SYMBOLS_AT_END: Regex = Regex::new(r"[ \-:./\\]+$").unwrap();
     static ref EMPTY_BRACKETS_REGEX: Regex = Regex::new(r"\(\s*\)|\[\s*\]|\{\s*\}").unwrap();
+    static ref PARANTHESES_WITHOUT_CONTENT: Regex = Regex::new(r"\(\W*\)|\[\W*\]|\{\W*\}").unwrap();
+    static ref STAR_REGEX_1: Regex = Regex::new(r"^[\[【★].*[\]】★][ \.]?(.+)").unwrap();
+    static ref STAR_REGEX_2: Regex = Regex::new(r"(.+)[ \.]?[\[【★].*[\]】★]$").unwrap();
     static ref MP3_REGEX: Regex = Regex::new(r"\bmp3$").unwrap();
     static ref SPACING_REGEX: Regex = Regex::new(r"\s+").unwrap();
-}
-
-#[derive(Debug)]
-struct Match {
-    raw_match: String,
-    match_index: usize,
-    remove: bool,
+    static ref DOT_REGEX: Regex = Regex::new(r"\.").unwrap();
 }
 
 pub struct Parser {
-    handlers: Vec<Box<dyn Fn(&str) -> Option<(String, String)>>>,
+    handlers: Vec<Handler>,
 }
 
 impl Parser {
@@ -29,21 +39,75 @@ impl Parser {
         Parser { handlers: Vec::new() }
     }
 
-    pub fn add_handler<F>(&mut self, handler: F)
-    where
-        F: Fn(&str) -> Option<(String, String)> + 'static,
-    {
-        self.handlers.push(Box::new(handler));
+    pub fn add_handler(&mut self, handler: Handler) {
+        self.handlers.push(handler);
     }
+
+    /*def clean_title(raw_title: str) -> str:
+       """
+       Clean up a title string by removing unwanted characters and patterns.
+
+       :param raw_title: The raw title string.
+       :return: The cleaned title string.
+       """
+       cleaned_title = raw_title
+       cleaned_title = cleaned_title.replace("_", " ")
+       cleaned_title = MOVIE_REGEX.sub("", cleaned_title)
+       cleaned_title = NOT_ALLOWED_SYMBOLS_AT_START_AND_END.sub("", cleaned_title)
+       cleaned_title = RUSSIAN_CAST_REGEX.sub("", cleaned_title)
+       cleaned_title = STAR_REGEX_1.sub(r"\1", cleaned_title)
+       cleaned_title = STAR_REGEX_2.sub(r"\1", cleaned_title)
+       cleaned_title = ALT_TITLES_REGEX.sub("", cleaned_title)
+       cleaned_title = NOT_ONLY_NON_ENGLISH_REGEX.sub("", cleaned_title)
+       cleaned_title = REMAINING_NOT_ALLOWED_SYMBOLS_AT_START_AND_END.sub("", cleaned_title)
+       cleaned_title = EMPTY_BRACKETS_REGEX.sub("", cleaned_title)
+       cleaned_title = MP3_REGEX.sub("", cleaned_title)
+       cleaned_title = PARANTHESES_WITHOUT_CONTENT.sub("", cleaned_title)
+
+       # Remove brackets if only one is present
+       for open_bracket, close_bracket in BRACKETS:
+           if cleaned_title.count(open_bracket) != cleaned_title.count(close_bracket):
+               cleaned_title = cleaned_title.replace(open_bracket, "").replace(close_bracket, "")
+
+       if " " not in cleaned_title and "." in cleaned_title:
+           cleaned_title = regex.sub(r"\.", " ", cleaned_title)
+
+       cleaned_title = REDUNDANT_SYMBOLS_AT_END.sub("", cleaned_title)
+       cleaned_title = SPACING_REGEX.sub(" ", cleaned_title)
+       cleaned_title = cleaned_title.strip()
+       return cleaned_title
+    */
 
     fn clean_title(&self, title: &str) -> String {
         let mut cleaned = title.to_string();
-        cleaned = CLEAN_TITLE_REGEX.replace_all(&cleaned, " ").to_string();
+        cleaned = cleaned.replace("_", " ");
         cleaned = MOVIE_REGEX.replace_all(&cleaned, "").to_string();
+        cleaned = NOT_ALLOWED_SYMBOLS_AT_START_AND_END.replace_all(&cleaned, "").to_string();
         cleaned = RUSSIAN_CAST_REGEX.replace_all(&cleaned, "").to_string();
+        cleaned = STAR_REGEX_1.replace_all(&cleaned, r"\1").to_string();
+        cleaned = STAR_REGEX_2.replace_all(&cleaned, r"\1").to_string();
+        cleaned = ALT_TITLES_REGEX.replace_all(&cleaned, "").to_string();
+        cleaned = NOT_ONLY_NON_ENGLISH_REGEX.replace_all(&cleaned, "").to_string();
+        cleaned = REMAINING_NOT_ALLOWED_SYMBOLS_AT_START_AND_END.replace_all(&cleaned, "").to_string();
         cleaned = EMPTY_BRACKETS_REGEX.replace_all(&cleaned, "").to_string();
         cleaned = MP3_REGEX.replace_all(&cleaned, "").to_string();
-        cleaned.trim().to_string()
+        cleaned = PARANTHESES_WITHOUT_CONTENT.replace_all(&cleaned, "").to_string();
+
+        // Remove brackets if only one is present
+        for (open_bracket, close_bracket) in BRACKETS {
+            if cleaned.matches(open_bracket).count() != cleaned.matches(close_bracket).count() {
+                cleaned = cleaned.replace(open_bracket, "").replace(close_bracket, "");
+            }
+        }
+
+        if !cleaned.contains(" ") && cleaned.contains(".") {
+            cleaned = DOT_REGEX.replace_all(&cleaned, " ").to_string();
+        }
+
+        cleaned = REDUNDANT_SYMBOLS_AT_END.replace_all(&cleaned, "").to_string();
+        cleaned = SPACING_REGEX.replace_all(&cleaned, " ").to_string();
+        cleaned = cleaned.trim().to_string();
+        cleaned
     }
 
     pub fn parse(&self, raw_title: &str) -> Result<ParsedTitle, ParserError> {
@@ -57,45 +121,27 @@ impl Parser {
 
         // Apply handlers and track matches
         for handler in &self.handlers {
-            if let Some((key, value)) = handler(&title) {
-                // Find the match in the original title
-                if let Some(match_index) = title.find(&value) {
-                    matched.insert(
-                        key.clone(),
-                        Match {
-                            raw_match: value.clone(),
-                            match_index,
-                            remove: true,
-                        },
-                    );
+            let match_result = handler.call(&HandlerContext {
+                title: &title,
+                result: &mut result,
+                matched: &mut matched,
+                // end_of_title: &mut end_of_title,
+            });
 
-                    // Update end_of_title if this match is earlier
-                    if match_index > 0 && match_index < end_of_title {
-                        end_of_title = match_index;
-                    }
+            // println!("match result for {}: {:?}", handler.get_name(), match_result);
 
-                    // Process the value
-                    match key.as_str() {
-                        "resolution" => result.resolution = Some(value),
-                        "quality" => result.quality = Some(value),
-                        "codec" => result.codec = Some(value),
-                        "audio" => result.audio.push(value),
-                        "channels" => result.channels.push(value),
-                        "languages" => result.languages.push(value),
-                        "seasons" => {
-                            if let Ok(season) = value.parse::<i32>() {
-                                result.seasons.push(season);
-                            }
-                        }
-                        "episodes" => {
-                            if let Ok(episode) = value.parse::<i32>() {
-                                result.episodes.push(episode);
-                            }
-                        }
-                        "group" => result.group = Some(value),
-                        _ => {}
-                    }
-                }
+            let Some(match_result) = match_result else {
+                continue;
+            };
+
+            if match_result.remove {
+                todo!()
+            }
+            if !match_result.skip_from_title && 1 < match_result.match_index && match_result.match_index < end_of_title {
+                end_of_title = match_result.match_index;
+            }
+            if match_result.remove && match_result.skip_from_title && match_result.match_index < end_of_title {
+                end_of_title -= match_result.raw_match.len();
             }
         }
 

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+mod handler_wrapper;
 mod handlers;
 mod parser;
 

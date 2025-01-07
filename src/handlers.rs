@@ -81,13 +81,13 @@ pub fn group_handler(title: &str) -> Option<(String, String)> {
 }
 
 pub fn add_default_handlers(parser: &mut super::Parser) {
-    parser.add_handler(resolution_handler);
-    parser.add_handler(quality_handler);
-    parser.add_handler(codec_handler);
-    parser.add_handler(audio_handler);
-    parser.add_handler(channel_handler);
-    parser.add_handler(season_handler);
-    parser.add_handler(episode_handler);
-    parser.add_handler(language_handler);
-    parser.add_handler(group_handler);
+    // parser.add_handler(resolution_handler);
+    // parser.add_handler(quality_handler);
+    // parser.add_handler(codec_handler);
+    // parser.add_handler(audio_handler);
+    // parser.add_handler(channel_handler);
+    // parser.add_handler(season_handler);
+    // parser.add_handler(episode_handler);
+    // parser.add_handler(language_handler);
+    // parser.add_handler(group_handler);
 }
