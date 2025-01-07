@@ -86,7 +86,7 @@ impl Parser {
 
         // Apply handlers and track matches
         for handler in &self.handlers {
-            let match_result = handler.call(&HandlerContext {
+            let match_result = handler.call(HandlerContext {
                 title: &title,
                 result: &mut result,
                 matched: &mut matched,

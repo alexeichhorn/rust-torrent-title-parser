@@ -45,17 +45,17 @@ impl Default for RegexHandlerOptions {
 
 pub struct Handler {
     name: String,
-    handler: Box<dyn Fn(&mut HandlerContext) -> Option<HandlerResult>>,
+    handler: Box<dyn Fn(HandlerContext) -> Option<HandlerResult>>,
 }
 
 impl Handler {
-    pub fn new_old(name: String, handler: Box<dyn Fn(&mut HandlerContext) -> Option<HandlerResult>>) -> Self {
+    pub fn new_old(name: String, handler: Box<dyn Fn(HandlerContext) -> Option<HandlerResult>>) -> Self {
         Handler { name, handler }
     }
 
     pub fn new<F>(name: &str, handler: F) -> Self
     where
-        F: Fn(&mut HandlerContext) -> Option<HandlerResult> + 'static,
+        F: Fn(HandlerContext) -> Option<HandlerResult> + 'static,
     {
         Handler::new_old(name.to_string(), Box::new(handler))
     }
@@ -102,7 +102,7 @@ impl Handler {
         transform: Option<Box<dyn Fn(&str) -> Option<String>>>,
         options: RegexHandlerOptions,
     ) -> Self {
-        let handler = Box::new(move |context: &mut HandlerContext| {
+        let handler = Box::new(move |context: HandlerContext| {
             let field = accessor(context.result);
             if field.is_set() && options.skip_if_already_found {
                 return None;
@@ -125,7 +125,7 @@ impl Handler {
         &self.name
     }
 
-    pub fn call(&self, context: &mut HandlerContext) -> Option<HandlerResult> {
+    pub fn call(&self, context: HandlerContext) -> Option<HandlerResult> {
         (self.handler)(context)
     }
 }
@@ -140,7 +140,7 @@ pub fn add_handler<F>(&mut self, handler: F)
 
 // region:
 
-trait PropertyIsSet {
+pub trait PropertyIsSet {
     fn is_set(&self) -> bool;
 }
 
