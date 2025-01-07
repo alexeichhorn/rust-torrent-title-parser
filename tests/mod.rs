@@ -12,6 +12,6 @@ mod test_extras;
 mod test_group;
 mod test_hardcoded;
 mod test_hdr;
-mod test_languages;
+mod test_language;
 mod test_main;
 mod test_special;

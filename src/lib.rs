@@ -12,7 +12,7 @@ pub enum ParserError {
     ParseError(String),
 }
 
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
 pub struct ParsedTitle {
     pub title: String,
     pub resolution: Option<String>,
@@ -52,6 +52,9 @@ pub struct ParsedTitle {
     pub documentary: bool,
     pub upscaled: bool,
     pub extras: Vec<String>,
+    pub size: Option<String>,
+    pub network: Option<String>,
+    pub scene: bool,
 }
 
 pub fn parse_title(raw_title: &str) -> Result<ParsedTitle, ParserError> {
