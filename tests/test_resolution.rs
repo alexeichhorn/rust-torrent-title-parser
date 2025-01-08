@@ -26,6 +26,7 @@ fn test_resolution_detection() {
         ("The Boys S04E01 E02 E03 4k to 1080p AMZN WEBrip x265 DDP5 1 D0c", "1080p"),
         ("Batman Returns 1992 4K Remastered BluRay 1080p DTS AC3 x264-MgB", "1080p"),
         ("Life After People (2008) [1080P.BLURAY] [720p] [BluRay] [YTS.MX]", "720p"),
+        ("Life After People (2008) [567P.BLURAY] [567p] [BluRay] [YTS.MX]", "567p"),
     ];
 
     for (release_name, expected_resolution) in test_cases {

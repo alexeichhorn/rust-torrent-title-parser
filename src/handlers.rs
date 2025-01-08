@@ -143,12 +143,6 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         },
     ));
 
-    /*
-
-        # Episode code
-    parser.add_handler("episode_code", regex.compile(r"[[(]([a-zA-Z0-9]{8})[\])](?=\.[a-zA-Z0-9]{1,5}$|$)"), uppercase, {"remove": True})
-    parser.add_handler("episode_code", regex.compile(r"\[([A-Z0-9]{8})]"), uppercase, {"remove": True}) */
-
     // Episode code
     parser.add_handler(Handler::from_regex(
         "episode_code",
@@ -165,6 +159,158 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         |t| &mut t.episode_code,
         Regex::new(r"\[([A-Z0-9]{8})]").unwrap(),
         transforms::uppercase,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    // Resolution
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)\[?\]?3840x\d{4}[\])?]?").unwrap(),
+        transforms::value("2160p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)\[?\]?1920x\d{3,4}[\])?]?").unwrap(),
+        transforms::value("1080p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)\[?\]?1280x\d{3}[\])?]?").unwrap(),
+        transforms::value("720p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)\[?\]?(\d{3,4}x\d{3,4})[\])?]?p?").unwrap(),
+        transforms::value("$1p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)(480|720|1080)0[pi]").unwrap(),
+        transforms::value("$1p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)(?:QHD|QuadHD|WQHD|2560(\d+)?x(\d+)?1440p?)").unwrap(),
+        transforms::value("1440p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)(?:Full HD|FHD|1920(\d+)?x(\d+)?1080p?)").unwrap(),
+        transforms::value("1080p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)(?:BD|HD|M)(2160p?|4k)").unwrap(),
+        transforms::value("2160p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)(?:BD|HD|M)1080p?").unwrap(),
+        transforms::value("1080p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)(?:BD|HD|M)720p?").unwrap(),
+        transforms::value("720p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)(?:BD|HD|M)480p?").unwrap(),
+        transforms::value("480p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)\b(?:4k|2160p|1080p|720p|480p)(?!.*\b(?:4k|2160p|1080p|720p|480p)\b)").unwrap(),
+        transforms::resolution_transform,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)\b4k|21600?[pi]\b").unwrap(),
+        transforms::value("2160p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)(\d{3,4})[pi]").unwrap(),
+        transforms::value("$1p"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "resolution",
+        |t| &mut t.resolution,
+        Regex::new(r"(?i)(240|360|480|576|720|1080|2160|3840)[pi]").unwrap(),
+        transforms::lowercase,
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
