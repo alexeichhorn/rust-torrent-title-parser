@@ -18,6 +18,7 @@ pub struct HandlerContext<'a> {
     // end_of_title: &'a mut usize,
 }
 
+#[derive(Debug)]
 pub struct HandlerResult {
     pub raw_match: String,
     pub match_index: usize,
