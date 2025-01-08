@@ -1,5 +1,5 @@
+use fancy_regex::Regex;
 use lazy_static::lazy_static;
-use regex::Regex;
 
 use crate::{
     handler_wrapper::{Handler, RegexHandlerOptions},
@@ -31,58 +31,6 @@ lazy_static! {
 
     // Group patterns
     static ref GROUP_PATTERN: Regex = Regex::new(r"(?i)-(\w+)$").unwrap();
-}
-
-pub fn resolution_handler(title: &str) -> Option<(String, String)> {
-    RESOLUTION_PATTERN
-        .captures(title)
-        .map(|caps| ("resolution".to_string(), caps[1].to_lowercase()))
-}
-
-pub fn quality_handler(title: &str) -> Option<(String, String)> {
-    QUALITY_PATTERN
-        .captures(title)
-        .map(|caps| ("quality".to_string(), caps[1].to_lowercase()))
-}
-
-pub fn codec_handler(title: &str) -> Option<(String, String)> {
-    CODEC_PATTERN
-        .captures(title)
-        .map(|caps| ("codec".to_string(), caps[1].to_lowercase()))
-}
-
-pub fn audio_handler(title: &str) -> Option<(String, String)> {
-    AUDIO_PATTERN
-        .captures(title)
-        .map(|caps| ("audio".to_string(), caps[1].to_lowercase()))
-}
-
-pub fn channel_handler(title: &str) -> Option<(String, String)> {
-    CHANNEL_PATTERN
-        .captures(title)
-        .map(|caps| ("channels".to_string(), caps[1].to_string()))
-}
-
-pub fn season_handler(title: &str) -> Option<(String, String)> {
-    SEASON_PATTERN
-        .captures(title)
-        .map(|caps| ("seasons".to_string(), caps[1].to_string()))
-}
-
-pub fn episode_handler(title: &str) -> Option<(String, String)> {
-    EPISODE_PATTERN
-        .captures(title)
-        .map(|caps| ("episodes".to_string(), caps[1].to_string()))
-}
-
-pub fn language_handler(title: &str) -> Option<(String, String)> {
-    LANGUAGE_PATTERN
-        .captures(title)
-        .map(|caps| ("languages".to_string(), caps[1].to_lowercase()))
-}
-
-pub fn group_handler(title: &str) -> Option<(String, String)> {
-    GROUP_PATTERN.captures(title).map(|caps| ("group".to_string(), caps[1].to_string()))
 }
 
 // commonly used transform functions
@@ -152,16 +100,6 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         },
     ));
 
-    /*
-       # Extras (This stuff can be trashed)
-       parser.add_handler("extras", regex.compile(r"\bNCED\b", regex.IGNORECASE), uniq_concat(value("NCED")), {"remove": True})
-       parser.add_handler("extras", regex.compile(r"\bNCOP\b", regex.IGNORECASE), uniq_concat(value("NCOP")), {"remove": True})
-       parser.add_handler("extras", regex.compile(r"\b(?:Deleted[ .-]*)?Scene(?:s)?\b", regex.IGNORECASE), uniq_concat(value("Deleted Scene")), {"remove": False})
-       parser.add_handler("extras", regex.compile(r"(?:(?<=\b(?:19\d{2}|20\d{2})\b.*)\b(?:Featurettes?)\b|\bFeaturettes?\b(?!.*\b(?:19\d{2}|20\d{2})\b))", regex.IGNORECASE), uniq_concat(value("Featurette")), {"skipFromTitle": True, "remove": False})
-       parser.add_handler("extras", regex.compile(r"(?:(?<=\b(?:19\d{2}|20\d{2})\b.*)\b(?:Sample)\b|\b(?:Sample)\b(?!.*\b(?:19\d{2}|20\d{2})\b))", regex.IGNORECASE), uniq_concat(value("Sample")), {"skipFromTitle": True, "remove": False})
-       parser.add_handler("extras", regex.compile(r"(?:(?<=\b(?:19\d{2}|20\d{2})\b.*)\b(?:Trailers?)\b|\bTrailers?\b(?!.*\b(?:19\d{2}|20\d{2}|.(Park|And))\b))", regex.IGNORECASE), uniq_concat(value("Trailer")), {"skipFromTitle": True, "remove": False})
-    */
-
     // Extras (this stuff can be trashed)
     parser.add_handler(Handler::from_regex(
         "extras",
@@ -170,6 +108,59 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         transforms::chain_transforms(transforms::replace_value("NCED"), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "extras",
+        |t| &mut t.extras,
+        Regex::new(r"(?i)\bNCOP\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("NCOP"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "extras",
+        |t| &mut t.extras,
+        Regex::new(r"(?i)\b(?:Deleted[ .-]*)?Scene(?:s)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("Deleted Scene"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "extras",
+        |t| &mut t.extras,
+        Regex::new(r"(?i)\b(?:19\d{2}|20\d{2})\b.*?\bFeaturettes?\b|\bFeaturettes?\b(?!.*?\b(?:19\d{2}|20\d{2})\b)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("Featurette"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "extras",
+        |t| &mut t.extras,
+        Regex::new(r"(?i)\b(?:19\d{2}|20\d{2})\b.*?\bSample\b|\bSample\b(?!.*?\b(?:19\d{2}|20\d{2})\b)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("Sample"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "extras",
+        |t| &mut t.extras,
+        Regex::new(r"(?i)\b(?:19\d{2}|20\d{2})\b.*?\bTrailers?\b|\bTrailers?\b(?!.*?\b(?:19\d{2}|20\d{2}|\.(?:Park|And))\b)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("Trailer"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            remove: false,
             ..Default::default()
         },
     ));

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
+use fancy_regex::Regex;
 use lazy_static::lazy_static;
-use regex::Regex;
 
 use crate::ParsedTitle;
 
@@ -113,7 +113,7 @@ impl Handler {
                 return None;
             }
 
-            if let Some(captures) = regex.captures(context.title) {
+            if let Ok(Some(captures)) = regex.captures(context.title) {
                 let m = captures.get(0).unwrap();
                 let raw_match = m.as_str(); // will always succeed (as it is equal to whole match)
                 let clean_match = captures.get(1).map(|m| m.as_str()).unwrap_or(raw_match);
@@ -122,7 +122,7 @@ impl Handler {
                     return None;
                 };
 
-                let before_title_match = BEFORE_TITLE_MATCH_REGEX.captures(context.title);
+                let before_title_match = BEFORE_TITLE_MATCH_REGEX.captures(context.title).unwrap_or(None);
                 let is_before_title = if let Some(before_title_match) = before_title_match {
                     before_title_match.get(1).unwrap().as_str().contains(raw_match)
                 } else {
