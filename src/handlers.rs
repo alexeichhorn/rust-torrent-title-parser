@@ -85,13 +85,24 @@ pub fn group_handler(title: &str) -> Option<(String, String)> {
     GROUP_PATTERN.captures(title).map(|caps| ("group".to_string(), caps[1].to_string()))
 }
 
+// commonly used transform functions
+mod transforms {
+    pub fn bool_if_non_empty(value: &str, _: &bool) -> Option<bool> {
+        if value.is_empty() {
+            None
+        } else {
+            Some(true)
+        }
+    }
+}
+
 pub fn add_default_handlers(parser: &mut super::Parser) {
     // Adult
     parser.add_handler(Handler::from_regex(
         "adult",
         |t| &mut t.adult,
-        Regex::new(r"\b(?:xxx|xx)\b").unwrap(),
-        None,
+        Regex::new(r"(?i)\b(?:xxx|xx)\b").unwrap(), // (?i) = case insensitive
+        transforms::bool_if_non_empty,
         RegexHandlerOptions {
             remove: true,
             skip_from_title: true,

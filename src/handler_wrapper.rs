@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use lazy_static::lazy_static;
 use regex::Regex;
 
 use crate::ParsedTitle;
@@ -8,7 +9,6 @@ use crate::ParsedTitle;
 pub struct Match {
     pub raw_match: String,
     pub match_index: usize,
-    pub remove: bool,
 }
 
 pub struct HandlerContext<'a> {
@@ -41,6 +41,10 @@ impl Default for RegexHandlerOptions {
             remove: false,
         }
     }
+}
+
+lazy_static! {
+    static ref BEFORE_TITLE_MATCH_REGEX: Regex = Regex::new(r"^\[(.*?)\]").unwrap();
 }
 
 pub struct Handler {
@@ -96,10 +100,10 @@ impl Handler {
        return None
     */
     pub fn from_regex<T: PropertyIsSet>(
-        name: &str,
+        name: &'static str,
         accessor: impl Fn(&mut ParsedTitle) -> &mut T + 'static,
         regex: Regex,
-        transform: Option<Box<dyn Fn(&str) -> Option<String>>>,
+        transform: impl Fn(&str, &T) -> Option<T> + 'static,
         options: RegexHandlerOptions,
     ) -> Self {
         let handler = Box::new(move |context: HandlerContext| {
@@ -109,16 +113,55 @@ impl Handler {
             }
 
             if let Some(captures) = regex.captures(context.title) {
-                let raw_match = captures.get(0).unwrap().as_str();
+                let m = captures.get(0).unwrap();
+                let raw_match = m.as_str(); // will always succeed (as it is equal to whole match)
                 let clean_match = captures.get(1).map(|m| m.as_str()).unwrap_or(raw_match);
 
-                todo!("Regex handlers not fully implemented yet");
+                let Some(transformed) = transform(clean_match, field) else {
+                    return None;
+                };
+
+                let before_title_match = BEFORE_TITLE_MATCH_REGEX.captures(context.title);
+                let is_before_title = if let Some(before_title_match) = before_title_match {
+                    before_title_match.get(1).unwrap().as_str().contains(raw_match)
+                } else {
+                    false
+                };
+
+                let other_matches = context
+                    .matched
+                    .iter()
+                    .filter(|(k, _)| k.as_str() != name)
+                    .collect::<HashMap<_, _>>();
+                let is_skip_if_first =
+                    options.skip_if_first && !other_matches.is_empty() && other_matches.iter().all(|(_, v)| m.start() < v.match_index);
+
+                if !is_skip_if_first {
+                    context.matched.insert(
+                        name.to_string(),
+                        Match {
+                            raw_match: raw_match.to_string(),
+                            match_index: m.start(),
+                        },
+                    );
+                    // set the extracted data
+                    *field = transformed;
+
+                    return Some(HandlerResult {
+                        raw_match: raw_match.to_string(),
+                        match_index: m.start(),
+                        remove: options.remove,
+                        skip_from_title: is_before_title || options.skip_from_title,
+                    });
+                } else {
+                    None
+                }
             } else {
                 None
             }
         });
 
-        Self::new(name, handler)
+        Self::new(&name, handler)
     }
 
     pub fn get_name(&self) -> &str {
