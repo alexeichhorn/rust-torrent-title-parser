@@ -316,4 +316,126 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
+
+    // Trash
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)\b(?:H[DQ][ .-]*)?CAM(?!.?(S|E|\()\d+)(?:H[DQ])?(?:[ .-]*Rip|Rp)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)\b(?:H[DQ][ .-]*)?S[ \.\-]print\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)\b(?:HD[ .-]*)?T(?:ELE)?(C|S)(?:INE|YNC)?(?:Rip)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)\bPre.?DVD(?:Rip)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)\b(?:DVD?|BD|BR)?[ .-]*Scr(?:eener)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)\bDVB[ .-]*(?:Rip)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)\bSAT[ .-]*Rips?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)\bLeaked\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)threesixtyp").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)\bR5|R6\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)(?:Deleted[ .-]*)?Scene(?:s)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |t| &mut t.trash,
+        Regex::new(r"(?i)\bHQ.?(Clean)?.?(Aud(io)?)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
 }
