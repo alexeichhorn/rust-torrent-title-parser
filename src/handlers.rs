@@ -141,16 +141,16 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     // TODO: add adult keyword pattern here
 
     // Scene
-    /*parser.add_handler(Handler::from_regex(
+    parser.add_handler(Handler::from_regex(
         "scene",
         |t| &mut t.scene,
-        Regex::new(r"^(?=.*(\b\d{3,4}p\b).*([_. ]WEB[_. ])(?!DL)\b)|\b(-CAKES|-GGEZ|-GGWP|-GLHF|-GOSSIP|-NAISU|-KOGI|-PECULATE|-SLOT|-EDITH|-ETHEL|-ELEANOR|-B2B|-SPAMnEGGS|-FTP|-DiRT|-SYNCOPY|-BAE|-SuccessfulCrab|-NHTFS|-SURCODE|-B0MBARDIERS)").unwrap(),
+        Regex::new(r"(\b\d{3,4}p\b.*[_. ]WEB[_. ][^D][^L]\b|\b-(?:CAKES|GGEZ|GGWP|GLHF|GOSSIP|NAISU|KOGI|PECULATE|SLOT|EDITH|ETHEL|ELEANOR|B2B|SPAMnEGGS|FTP|DiRT|SYNCOPY|BAE|SuccessfulCrab|NHTFS|SURCODE|B0MBARDIERS)\b)").unwrap(), // removed positive/negative lookahead (compated to Python version)
         transforms::true_if_found,
         RegexHandlerOptions {
             remove: false,
             ..Default::default()
         },
-    ));*/
+    ));
 
     /*
        # Extras (This stuff can be trashed)
