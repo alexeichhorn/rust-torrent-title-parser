@@ -3,6 +3,7 @@ use thiserror::Error;
 mod handler_wrapper;
 mod handlers;
 mod parser;
+mod transforms;
 
 pub use parser::Parser;
 
