@@ -139,6 +139,7 @@ impl Parser {
         }
 
         // Clean the title by taking only the part before the first match
+        end_of_title = end_of_title.min(title.len()); // TODO: maybe fix that this can't be possible (e.g. for "2008 The Incredible Hulk Feature Film.mp4")
         let title = title[..end_of_title].to_string();
         result.title = self.clean_title(&title);
 

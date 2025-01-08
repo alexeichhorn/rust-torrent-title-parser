@@ -33,6 +33,7 @@ pub struct ParsedTitle {
     pub unrated: bool,
     pub region: Option<String>,
     pub quality: Option<String>,
+    pub bitrate: Option<String>,
     pub bit_depth: Option<String>,
     pub hdr: Vec<String>,
     pub codec: Option<String>,

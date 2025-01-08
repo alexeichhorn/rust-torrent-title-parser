@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use chrono::NaiveDate;
 use fancy_regex::Regex;
 use lazy_static::lazy_static;
@@ -23,6 +25,18 @@ pub fn true_if_found(value: &str, _: &bool) -> Option<bool> {
         None
     } else {
         Some(true)
+    }
+}
+
+pub fn parse<T: FromStr>(value: &str, _: &Option<T>) -> Option<Option<T>> {
+    let value = value.trim();
+    if value.is_empty() {
+        None
+    } else {
+        match value.parse::<T>() {
+            Ok(result) => Some(Some(result)),
+            Err(_) => None,
+        }
     }
 }
 

@@ -546,4 +546,48 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
+
+    // Bit Rate
+    parser.add_handler(Handler::from_regex(
+        "bitrate",
+        |t| &mut t.bitrate,
+        Regex::new(r"(?i)\b\d+[kmg]bps\b").unwrap(),
+        transforms::lowercase,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    // Year
+    parser.add_handler(Handler::from_regex(
+        "year",
+        |t| &mut t.year,
+        Regex::new(r"\b(20[0-9]{2}|2100)(?!\D*\d{4}\b)").unwrap(),
+        transforms::parse::<i32>,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    /*parser.add_handler(Handler::from_regex( // TODO: temporarily disabled as regex doesn't really work with fancy_regex
+        "year",
+        |t| &mut t.year,
+        Regex::new(r"(?i)[([]?(?!^)(?:^|[^0-9])((?:19\d|20[012])\d)(?!\d|kbps)[)\]]?").unwrap(),
+        transforms::parse::<i32>,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));*/
+    parser.add_handler(Handler::from_regex(
+        "year",
+        |t| &mut t.year,
+        Regex::new(r"(?i)^[\[\(]?((?:19[0-9]|20[012])[0-9])(?![0-9]|kbps)[\]\)]?").unwrap(),
+        transforms::parse::<i32>,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
 }
