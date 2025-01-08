@@ -1,3 +1,11 @@
+use chrono::NaiveDate;
+use fancy_regex::Regex;
+use lazy_static::lazy_static;
+
+lazy_static! {
+    static ref SANITIZER_REGEX: Regex = Regex::new(r"\W+").unwrap();
+}
+
 pub fn identity<'a>(value: &'a str, _: &Option<String>) -> Option<Option<String>> {
     Some(Some(value.to_string()))
 }
@@ -33,6 +41,67 @@ pub fn replace_value(value: &'static str) -> impl Fn(&str) -> String {
         let mut result = value.to_string();
         result = result.replace("$1", input_value);
         result
+    }
+}
+
+fn convert_months(date_str: &str) -> String {
+    let mut result = date_str.to_string();
+
+    // Map of full month names to shortened forms
+    lazy_static! {
+        static ref MONTH_MAPPING: [(Regex, &'static str); 12] = [
+            (Regex::new(r"(?i)\bJanu\b").unwrap(), "Jan"),
+            (Regex::new(r"(?i)\bFebr\b").unwrap(), "Feb"),
+            (Regex::new(r"(?i)\bMarc\b").unwrap(), "Mar"),
+            (Regex::new(r"(?i)\bApri\b").unwrap(), "Apr"),
+            (Regex::new(r"(?i)\bMay\b").unwrap(), "May"),
+            (Regex::new(r"(?i)\bJune\b").unwrap(), "Jun"),
+            (Regex::new(r"(?i)\bJuly\b").unwrap(), "Jul"),
+            (Regex::new(r"(?i)\bAugu\b").unwrap(), "Aug"),
+            (Regex::new(r"(?i)\bSept\b").unwrap(), "Sep"),
+            (Regex::new(r"(?i)\bOcto\b").unwrap(), "Oct"),
+            (Regex::new(r"(?i)\bNove\b").unwrap(), "Nov"),
+            (Regex::new(r"(?i)\bDece\b").unwrap(), "Dec"),
+        ];
+    }
+
+    // Replace each full month name with its shortened form
+    for (month, shortened) in MONTH_MAPPING.iter() {
+        result = month.replace_all(&result, *shortened).to_string();
+    }
+
+    result
+}
+
+/// Return a transformer that parses dates using the specified format
+///
+/// :param date_format: The date format to use for parsing (e.g. "YYYY MM DD")
+/// :return: The transformer function.
+pub fn date_from_format(format: &'static str) -> impl Fn(&str, &Option<String>) -> Option<Option<String>> {
+    move |input_value: &str, _| {
+        let sanitized = SANITIZER_REGEX.replace_all(input_value, " ").trim().to_string();
+        let sanitized = convert_months(&sanitized);
+
+        println!("input_value: '{}' sanitized: '{}' for format: '{}'", input_value, sanitized, format);
+
+        let date = NaiveDate::parse_from_str(&sanitized, format).ok()?;
+
+        Some(Some(date.format("%Y-%m-%d").to_string())) // normalize to YYYY-MM-DD
+    }
+}
+
+/// Return a transformer that parses dates using the specified formats
+pub fn date_from_formats(formats: &'static [&'static str]) -> impl Fn(&str, &Option<String>) -> Option<Option<String>> {
+    let format_functions: Vec<_> = formats.iter().map(|format| date_from_format(format)).collect();
+
+    move |input_value: &str, existing| {
+        for format_function in &format_functions {
+            let result = format_function(input_value, existing);
+            if result.is_some() {
+                return result;
+            }
+        }
+        None
     }
 }
 
