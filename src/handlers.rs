@@ -35,6 +35,15 @@ lazy_static! {
 
 // commonly used transform functions
 mod transforms {
+
+    pub fn identity<'a>(value: &'a str, _: &Option<String>) -> Option<Option<String>> {
+        Some(Some(value.to_string()))
+    }
+
+    pub fn uppercase(value: &str, _: &Option<String>) -> Option<Option<String>> {
+        Some(Some(value.to_uppercase()))
+    }
+
     pub fn true_if_found(value: &str, _: &bool) -> Option<bool> {
         if value.is_empty() {
             None
@@ -185,6 +194,58 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         RegexHandlerOptions {
             skip_from_title: true,
             remove: false,
+            ..Default::default()
+        },
+    ));
+
+    // First batch of site (before languages to get rid of domain name with country code)
+    parser.add_handler(Handler::from_regex(
+        "site",
+        |t| &mut t.site,
+        Regex::new(r"(?i)^(www?[\.,][\w-]+\.[\w-]+(?:\.[\w-]+)?)\s+-\s*").unwrap(),
+        transforms::identity,
+        RegexHandlerOptions {
+            skip_from_title: true,
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "site",
+        |t| &mut t.site,
+        Regex::new(r"(?i)^((?:www?[\.,])?[\w-]+\.[\w-]+(?:\.[\w-]+)*?)\s+-\s*").unwrap(),
+        transforms::identity,
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+
+        # Episode code
+    parser.add_handler("episode_code", regex.compile(r"[[(]([a-zA-Z0-9]{8})[\])](?=\.[a-zA-Z0-9]{1,5}$|$)"), uppercase, {"remove": True})
+    parser.add_handler("episode_code", regex.compile(r"\[([A-Z0-9]{8})]"), uppercase, {"remove": True}) */
+
+    // Episode code
+    parser.add_handler(Handler::from_regex(
+        "episode_code",
+        |t| &mut t.episode_code,
+        Regex::new(r"[\[\(]([0-9A-Za-z]{8})[\]\)](?=\.[0-9A-Za-z]{1,5}$|$)").unwrap(),
+        transforms::uppercase,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episode_code",
+        |t| &mut t.episode_code,
+        Regex::new(r"\[([A-Z0-9]{8})]").unwrap(),
+        transforms::uppercase,
+        RegexHandlerOptions {
+            remove: true,
             ..Default::default()
         },
     ));
