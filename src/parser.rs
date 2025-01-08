@@ -76,11 +76,8 @@ impl Parser {
         cleaned = STAR_REGEX_1.replace_all(&cleaned, r"\1").to_string();
         cleaned = STAR_REGEX_2.replace_all(&cleaned, r"\1").to_string();
         cleaned = ALT_TITLES_REGEX.replace_all(&cleaned, "").to_string();
-        println!("1: {}", cleaned);
         cleaned = NOT_ONLY_NON_ENGLISH_REGEX.replace_all(&cleaned, "").to_string();
-        println!("2: {}", cleaned);
         cleaned = REMAINING_NOT_ALLOWED_SYMBOLS_AT_START_AND_END.replace_all(&cleaned, "").to_string();
-        println!("3: {}", cleaned);
         cleaned = EMPTY_BRACKETS_REGEX.replace_all(&cleaned, "").to_string();
         cleaned = MP3_REGEX.replace_all(&cleaned, "").to_string();
         cleaned = PARANTHESES_WITHOUT_CONTENT.replace_all(&cleaned, "").to_string();

@@ -87,11 +87,40 @@ pub fn group_handler(title: &str) -> Option<(String, String)> {
 
 // commonly used transform functions
 mod transforms {
-    pub fn bool_if_non_empty(value: &str, _: &bool) -> Option<bool> {
+    pub fn true_if_found(value: &str, _: &bool) -> Option<bool> {
         if value.is_empty() {
             None
         } else {
             Some(true)
+        }
+    }
+
+    pub fn replace_value(value: &'static str) -> impl Fn(&str) -> String {
+        move |input_value: &str| -> String {
+            let mut result = value.to_string();
+            result = result.replace("$1", input_value);
+            result
+        }
+    }
+
+    pub fn uniq_concat(value: &str, result: &Vec<String>) -> Option<Vec<String>> {
+        let mut result = result.clone();
+        if result.contains(&value.to_string()) {
+            return Some(result);
+        }
+        result.push(value.to_string());
+        Some(result)
+    }
+
+    pub fn chain_transforms<T, F1, F2, R1>(transform1: F1, transform2: F2) -> impl Fn(&str, &T) -> Option<T>
+    where
+        F1: Fn(&str) -> R1,
+        F2: Fn(&str, &T) -> Option<T>,
+        R1: AsRef<str>,
+    {
+        move |value: &str, state: &T| {
+            let intermediate = transform1(value);
+            transform2(intermediate.as_ref(), state)
         }
     }
 }
@@ -102,21 +131,46 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "adult",
         |t| &mut t.adult,
         Regex::new(r"(?i)\b(?:xxx|xx)\b").unwrap(), // (?i) = case insensitive
-        transforms::bool_if_non_empty,
+        transforms::true_if_found,
         RegexHandlerOptions {
             remove: true,
             skip_from_title: true,
             ..Default::default()
         },
     ));
+    // TODO: add adult keyword pattern here
 
-    // parser.add_handler(resolution_handler);
-    // parser.add_handler(quality_handler);
-    // parser.add_handler(codec_handler);
-    // parser.add_handler(audio_handler);
-    // parser.add_handler(channel_handler);
-    // parser.add_handler(season_handler);
-    // parser.add_handler(episode_handler);
-    // parser.add_handler(language_handler);
-    // parser.add_handler(group_handler);
+    // Scene
+    /*parser.add_handler(Handler::from_regex(
+        "scene",
+        |t| &mut t.scene,
+        Regex::new(r"^(?=.*(\b\d{3,4}p\b).*([_. ]WEB[_. ])(?!DL)\b)|\b(-CAKES|-GGEZ|-GGWP|-GLHF|-GOSSIP|-NAISU|-KOGI|-PECULATE|-SLOT|-EDITH|-ETHEL|-ELEANOR|-B2B|-SPAMnEGGS|-FTP|-DiRT|-SYNCOPY|-BAE|-SuccessfulCrab|-NHTFS|-SURCODE|-B0MBARDIERS)").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));*/
+
+    /*
+       # Extras (This stuff can be trashed)
+       parser.add_handler("extras", regex.compile(r"\bNCED\b", regex.IGNORECASE), uniq_concat(value("NCED")), {"remove": True})
+       parser.add_handler("extras", regex.compile(r"\bNCOP\b", regex.IGNORECASE), uniq_concat(value("NCOP")), {"remove": True})
+       parser.add_handler("extras", regex.compile(r"\b(?:Deleted[ .-]*)?Scene(?:s)?\b", regex.IGNORECASE), uniq_concat(value("Deleted Scene")), {"remove": False})
+       parser.add_handler("extras", regex.compile(r"(?:(?<=\b(?:19\d{2}|20\d{2})\b.*)\b(?:Featurettes?)\b|\bFeaturettes?\b(?!.*\b(?:19\d{2}|20\d{2})\b))", regex.IGNORECASE), uniq_concat(value("Featurette")), {"skipFromTitle": True, "remove": False})
+       parser.add_handler("extras", regex.compile(r"(?:(?<=\b(?:19\d{2}|20\d{2})\b.*)\b(?:Sample)\b|\b(?:Sample)\b(?!.*\b(?:19\d{2}|20\d{2})\b))", regex.IGNORECASE), uniq_concat(value("Sample")), {"skipFromTitle": True, "remove": False})
+       parser.add_handler("extras", regex.compile(r"(?:(?<=\b(?:19\d{2}|20\d{2})\b.*)\b(?:Trailers?)\b|\bTrailers?\b(?!.*\b(?:19\d{2}|20\d{2}|.(Park|And))\b))", regex.IGNORECASE), uniq_concat(value("Trailer")), {"skipFromTitle": True, "remove": False})
+    */
+
+    // Extras (this stuff can be trashed)
+    parser.add_handler(Handler::from_regex(
+        "extras",
+        |t| &mut t.extras,
+        Regex::new(r"(?i)\bNCED\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("NCED"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
 }

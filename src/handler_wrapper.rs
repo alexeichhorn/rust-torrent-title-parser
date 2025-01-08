@@ -199,3 +199,9 @@ impl PropertyIsSet for bool {
         *self
     }
 }
+
+impl<T> PropertyIsSet for Vec<T> {
+    fn is_set(&self) -> bool {
+        !self.is_empty()
+    }
+}
