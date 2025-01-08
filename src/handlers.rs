@@ -524,4 +524,26 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
+
+    // Complete
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"\b((?:19\d|20[012])\d[ .]?-[ .]?(?:19\d|20[012])\d)\b").unwrap(), // year range
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"[\[\(][ .]?((19\d|20[012])\d[ .]?-[ .]?\d{2})[ .]?[\]\)]").unwrap(), // year range
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
 }
