@@ -164,4 +164,28 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
+
+    // PPV
+    parser.add_handler(Handler::from_regex(
+        "ppv",
+        |t| &mut t.ppv,
+        Regex::new(r"(?i)\bPPV\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            skip_from_title: true,
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "ppv",
+        |t| &mut t.ppv,
+        Regex::new(r"(?i)\b\W?Fight.?Nights?\W?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            skip_from_title: true,
+            remove: false,
+            ..Default::default()
+        },
+    ));
 }
