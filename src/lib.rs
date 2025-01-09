@@ -60,8 +60,6 @@ pub struct ParsedTitle {
 }
 
 pub fn parse_title(raw_title: &str) -> Result<ParsedTitle, ParserError> {
-    // TODO: save it statically to prevent re-compiling of regexes every time
-    let mut parser = Parser::new();
-    handlers::add_default_handlers(&mut parser);
+    let parser = Parser::default();
     parser.parse(raw_title)
 }

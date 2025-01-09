@@ -1,11 +1,14 @@
 use crate::handler_wrapper::Handler;
 use crate::handler_wrapper::HandlerContext;
 use crate::handler_wrapper::Match;
+use crate::handlers;
 use crate::ParsedTitle;
 use crate::ParserError;
 use lazy_static::lazy_static;
+
 use regex::Regex;
 use std::collections::HashMap;
+use std::sync::OnceLock;
 
 const CURLY_BRACKETS: (&str, &str) = ("{", "}");
 const SQUARE_BRACKETS: (&str, &str) = ("[", "]");
@@ -54,6 +57,8 @@ lazy_static! {
     static ref DOT_REGEX: Regex = Regex::new(r"\.").unwrap();
 }
 
+static DEFAULT_PARSER: OnceLock<Parser> = OnceLock::new();
+
 pub struct Parser {
     handlers: Vec<Handler>,
 }
@@ -61,6 +66,14 @@ pub struct Parser {
 impl Parser {
     pub fn new() -> Self {
         Parser { handlers: Vec::new() }
+    }
+
+    pub fn default() -> &'static Parser {
+        DEFAULT_PARSER.get_or_init(|| {
+            let mut parser = Parser::new();
+            handlers::add_default_handlers(&mut parser);
+            parser
+        })
     }
 
     pub fn add_handler(&mut self, handler: Handler) {

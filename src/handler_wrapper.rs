@@ -48,19 +48,21 @@ lazy_static! {
     static ref BEFORE_TITLE_MATCH_REGEX: Regex = Regex::new(r"^\[(.*?)\]").unwrap();
 }
 
+type HandlerFn = dyn Fn(HandlerContext) -> Option<HandlerResult> + Send + Sync;
+
 pub struct Handler {
     name: String,
-    handler: Box<dyn Fn(HandlerContext) -> Option<HandlerResult>>,
+    handler: Box<HandlerFn>,
 }
 
 impl Handler {
-    pub fn new_old(name: String, handler: Box<dyn Fn(HandlerContext) -> Option<HandlerResult>>) -> Self {
+    pub fn new_old(name: String, handler: Box<HandlerFn>) -> Self {
         Handler { name, handler }
     }
 
     pub fn new<F>(name: &str, handler: F) -> Self
     where
-        F: Fn(HandlerContext) -> Option<HandlerResult> + 'static,
+        F: Fn(HandlerContext) -> Option<HandlerResult> + Send + Sync + 'static,
     {
         Handler::new_old(name.to_string(), Box::new(handler))
     }
@@ -102,9 +104,9 @@ impl Handler {
     */
     pub fn from_regex<T: PropertyIsSet>(
         name: &'static str,
-        accessor: impl Fn(&mut ParsedTitle) -> &mut T + 'static,
+        accessor: impl Fn(&mut ParsedTitle) -> &mut T + Send + Sync + 'static,
         regex: Regex,
-        transform: impl Fn(&str, &T) -> Option<T> + 'static,
+        transform: impl Fn(&str, &T) -> Option<T> + Send + Sync + 'static,
         options: RegexHandlerOptions,
     ) -> Self {
         let handler = Box::new(move |context: HandlerContext| {
