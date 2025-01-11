@@ -685,7 +685,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "edition",
         |t| &mut t.edition,
-        Regex::new(r#"\b\.Diamond\.\b"#).unwrap(),
+        Regex::new(r#"(?i)\b\.Diamond\.\b"#).unwrap(),
         transforms::value("Diamond Edition"),
         RegexHandlerOptions {
             remove: true,
@@ -699,6 +699,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         transforms::value("Remastered"),
         RegexHandlerOptions {
             remove: true,
+            skip_if_already_found: true,
             ..Default::default()
         },
     ));
@@ -707,30 +708,111 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "upscaled",
         |t| &mut t.upscaled,
-        Regex::new(r"\b(?:AI.?)?(Upscal(ed?|ing)|Enhanced?)\b").unwrap(),
+        Regex::new(r"(?i)\b(?:AI.?)?(Upscal(ed?|ing)|Enhanced?)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "upscaled",
+        |t| &mut t.upscaled,
+        Regex::new(r"(?i)\b(?:iris2|regrade|ups(uhd|fhd|hd|4k))\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "upscaled",
+        |t| &mut t.upscaled,
+        Regex::new(r"(?i)\b\.AI\.\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    // Convert
+    parser.add_handler(Handler::from_regex(
+        "convert",
+        |t| &mut t.convert,
+        Regex::new(r"(?i)\bCONVERT\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    // Hardcoded
+    parser.add_handler(Handler::from_regex(
+        "hardcoded",
+        |t| &mut t.hardcoded,
+        Regex::new(r"(?i)\bHC|HARDCODED\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    // Proper
+    parser.add_handler(Handler::from_regex(
+        "proper",
+        |t| &mut t.proper,
+        Regex::new(r"(?i)\b(?:REAL.)?PROPER\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    // Repack
+    parser.add_handler(Handler::from_regex(
+        "repack",
+        |t| &mut t.repack,
+        Regex::new(r"(?i)\bREPACK|RERIP\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    // Retail
+    parser.add_handler(Handler::from_regex(
+        "retail",
+        |t| &mut t.retail,
+        Regex::new(r"(?i)\bRetail\b").unwrap(),
         transforms::true_if_found,
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
         },
     ));
+
+    // Remastered
     parser.add_handler(Handler::from_regex(
-        "upscaled",
-        |t| &mut t.upscaled,
-        Regex::new(r"\b(?:iris2|regrade|ups(uhd|fhd|hd|4k))\b").unwrap(),
+        "remastered",
+        |t| &mut t.remastered,
+        Regex::new(r"(?i)\bRemaster(?:ed)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    // Documentary
+    parser.add_handler(Handler::from_regex(
+        "documentary",
+        |t| &mut t.documentary,
+        Regex::new(r"(?i)\bDOCU(?:menta?ry)?\b").unwrap(),
         transforms::true_if_found,
         RegexHandlerOptions {
-            remove: true,
+            skip_from_title: true,
             ..Default::default()
         },
     ));
+
+    // Unrated
     parser.add_handler(Handler::from_regex(
-        "upscaled",
-        |t| &mut t.upscaled,
-        Regex::new(r"\b\.AI\.\b").unwrap(),
+        "unrated",
+        |t| &mut t.unrated,
+        Regex::new(r"(?i)\bunrated|uncensored\b").unwrap(),
         transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    // Region
+    parser.add_handler(Handler::from_regex(
+        "region",
+        |t| &mut t.region,
+        Regex::new(r"R\d\b").unwrap(),
+        transforms::identity,
         RegexHandlerOptions {
-            remove: true,
+            skip_if_first: true,
             ..Default::default()
         },
     ));
