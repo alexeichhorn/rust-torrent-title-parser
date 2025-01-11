@@ -1888,4 +1888,603 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
+
+    /*
+     Seasons
+    parser.add_handler("seasons", regex.compile(r"(?:complete\W|seasons?\W|\W|^)((?:s\d{1,2}[., +/\\&-]+)+s\d{1,2}\b)", regex.IGNORECASE), range_func, {"remove": True})
+    parser.add_handler("seasons", regex.compile(r"(?:complete\W|seasons?\W|\W|^)[([]?(s\d{2,}-\d{2,}\b)[)\]]?", regex.IGNORECASE), range_func, {"remove": True})
+    parser.add_handler("seasons", regex.compile(r"(?:complete\W|seasons?\W|\W|^)[([]?(s[1-9]-[2-9])[)\]]?", regex.IGNORECASE), range_func, {"remove": True})
+    parser.add_handler("seasons", regex.compile(r"\d+ª(?:.+)?(?:a.?)?\d+ª(?:(?:.+)?(?:temporadas?))", regex.IGNORECASE), range_func, {"remove": True})
+    parser.add_handler("seasons", regex.compile(r"(?:(?:\bthe\W)?\bcomplete\W)?(?:seasons?|[Сс]езони?|temporadas?)[. ]?[-:]?[. ]?[([]?((?:\d{1,2}[., /\\&]+)+\d{1,2}\b)[)\]]?", regex.IGNORECASE), range_func, {"remove": True})
+    parser.add_handler("seasons", regex.compile(r"(?:(?:\bthe\W)?\bcomplete\W)?(?:seasons?|[Сс]езони?|temporadas?)[. ]?[-:]?[. ]?[([]?((?:\d{1,2}[.-]+)+[1-9]\d?\b)[)\]]?", regex.IGNORECASE), range_func, {"remove": True})
+    parser.add_handler("seasons", regex.compile(r"(?:(?:\bthe\W)?\bcomplete\W)?season[. ]?[([]?((?:\d{1,2}[. -]+)+[1-9]\d?\b)[)\]]?(?!.*\.\w{2,4}$)", regex.IGNORECASE), range_func, {"remove": True})
+    parser.add_handler("seasons", regex.compile(r"(?:(?:\bthe\W)?\bcomplete\W)?\bseasons?\b[. -]?(\d{1,2}[. -]?(?:to|thru|and|\+|:)[. -]?\d{1,2})\b", regex.IGNORECASE), range_func, {"remove": True})
+    parser.add_handler("seasons", regex.compile(r"(?:(?:\bthe\W)?\bcomplete\W)?(?:saison|seizoen|season|series|temp(?:orada)?):?[. ]?(\d{1,2})\b", regex.IGNORECASE), array(integer))
+    parser.add_handler("seasons", regex.compile(r"(\d{1,2})(?:-?й)?[. _]?(?:[Сс]езон|sez(?:on)?)(?:\W?\D|$)", regex.IGNORECASE), array(integer))
+    parser.add_handler("seasons", regex.compile(r"[Сс]езон:?[. _]?№?(\d{1,2})(?!\d)", regex.IGNORECASE), array(integer))
+    parser.add_handler("seasons", regex.compile(r"(?:\D|^)(\d{1,2})Â?[°ºªa]?[. ]*temporada", regex.IGNORECASE), array(integer), {"remove": True})
+    parser.add_handler("seasons", regex.compile(r"t(\d{1,3})(?:[ex]+|$)", regex.IGNORECASE), array(integer), {"remove": True})
+    parser.add_handler("seasons", regex.compile(r"(?:(?:\bthe\W)?\bcomplete)?s(\d{1,3})(?:[\Wex]|\d{2}\b|$)", regex.IGNORECASE), array(integer), {"remove": False, "skipIfAlreadyFound": False})
+    parser.add_handler("seasons", regex.compile(r"(?:(?:\bthe\W)?\bcomplete\W)?(?:\W|^)(\d{1,2})[. ]?(?:st|nd|rd|th)[. ]*season", regex.IGNORECASE), array(integer))
+    parser.add_handler("seasons", regex.compile(r"(?<=S)\d{2}(?=E\d+)"), array(integer))
+    parser.add_handler("seasons", regex.compile(r"(?:\D|^)(\d{1,2})[xх]\d{1,3}(?:\D|$)"), array(integer))
+    parser.add_handler("seasons", regex.compile(r"\bSn([1-9])(?:\D|$)"), array(integer))
+    parser.add_handler("seasons", regex.compile(r"[[(](\d{1,2})\.\d{1,3}[)\]]"), array(integer))
+    parser.add_handler("seasons", regex.compile(r"-\s?(\d{1,2})\.\d{2,3}\s?-"), array(integer))
+    parser.add_handler("seasons", regex.compile(r"(?:^|\/)(\d{1,2})-\d{2}\b(?!-\d)"), array(integer))
+    parser.add_handler("seasons", regex.compile(r"[^\w-](\d{1,2})-\d{2}(?=\.\w{2,4}$)"), array(integer))
+    parser.add_handler("seasons", regex.compile(r"(?<!\bEp?(?:isode)? ?\d+\b.*)\b(\d{2})[ ._]\d{2}(?:.F)?\.\w{2,4}$"), array(integer))
+    parser.add_handler("seasons", regex.compile(r"\bEp(?:isode)?\W+(\d{1,2})\.\d{1,3}\b", regex.IGNORECASE), array(integer))
+    parser.add_handler("seasons", regex.compile(r"\bSeasons?\b.*\b(\d{1,2}-\d{1,2})\b", regex.IGNORECASE), range_func)
+    parser.add_handler("seasons", regex.compile(r"(?:\W|^)(\d{1,2})(?:e|ep)\d{1,3}(?:\W|$)", regex.IGNORECASE), array(integer))
+     */
+
+    // Seasons
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:complete\W|seasons?\W|\W|^)((?:s\d{1,2}[., +/\\&-]+)+s\d{1,2}\b)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:complete\W|seasons?\W|\W|^)[\(\[]?(s\d{2,}-\d{2,}\b)[\)\]]?").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:complete\W|seasons?\W|\W|^)[\(\[]?(s[1-9]-[2-9])[\)\]]?").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)\d+ª(?:.+)?(?:a.?)?\d+ª(?:(?:.+)?(?:temporadas?))").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:(?:\bthe\W)?\bcomplete\W)?(?:seasons?|[Сс]езони?|temporadas?)[. ]?[-:]?[. ]?[\(\[]?((?:\d{1,2}[., /\\&]+)+\d{1,2}\b)[\)\]]?").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(
+            r"(?i)(?:(?:\bthe\W)?\bcomplete\W)?(?:seasons?|[Сс]езони?|temporadas?)[. ]?[-:]?[. ]?[\(\[]?((?:\d{1,2}[.-]+)+[1-9]\d?\b)[\)\]]?",
+        ).unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:(?:\bthe\W)?\bcomplete\W)?season[. ]?[\(\[]?((?:\d{1,2}[. -]+)+[1-9]\d?\b)[\)\]]?(?!.*\.\w{2,4}$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:(?:\bthe\W)?\bcomplete\W)?\bseasons?\b[. -]?(\d{1,2}[. -]?(?:to|thru|and|\+|:)[. -]?\d{1,2})\b").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:(?:\bthe\W)?\bcomplete\W)?(?:saison|seizoen|season|series|temp(?:orada)?):?[. ]?(\d{1,2})\b").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(\d{1,2})(?:-?й)?[. _]?(?:[Сс]езон|sez(?:on)?)(?:\W?\D|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)[Сс]езон:?[. _]?№?(\d{1,2})(?!\d)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:\D|^)(\d{1,2})Â?[°ºªa]?[. ]*temporada").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)t(\d{1,3})(?:[ex]+|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:(?:\bthe\W)?\bcomplete)?s(\d{1,3})(?:[\Wex]|\d{2}\b|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions {
+            remove: false,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:(?:\bthe\W)?\bcomplete\W)?(?:\W|^)(\d{1,2})[. ]?(?:st|nd|rd|th)[. ]*season").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?<=S)\d{2}(?=E\d+)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:\D|^)(\d{1,2})[xх]\d{1,3}(?:\D|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)\bSn([1-9])(?:\D|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)[\[\(](\d{1,2})\.\d{1,3}[\)\]]").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)-\s?(\d{1,2})\.\d{2,3}\s?-").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:^|\/)(\d{1,2})-\d{2}\b(?!-\d)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)[^\w-](\d{1,2})-\d{2}(?=\.\w{2,4}$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)^(?!.*\bEp?(?:isode)? ?\d+\b.*\b\d{2}[ ._]\d{2}).*\b(\d{2})[ ._]\d{2}(?:\.F)?\.\w{2,4}$").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)\bEp(?:isode)?\W+(\d{1,2})\.\d{1,3}\b").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)\bSeasons?\b.*\b(\d{1,2}-\d{1,2})\b").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::new(r"(?i)(?:\W|^)(\d{1,2})(?:e|ep)\d{1,3}(?:\W|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+
+    /*
+     Episodes
+    parser.add_handler("episodes", regex.compile(r"(?:[\W\d]|^)e[ .]?[([]?(\d{1,3}(?:[ .-]*(?:[&+]|e){1,2}[ .]?\d{1,3})+)(?:\W|$)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"(?:[\W\d]|^)ep[ .]?[([]?(\d{1,3}(?:[ .-]*(?:[&+]|ep){1,2}[ .]?\d{1,3})+)(?:\W|$)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"(?:[\W\d]|^)\d+[xх][ .]?[([]?(\d{1,3}(?:[ .]?[xх][ .]?\d{1,3})+)(?:\W|$)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"(?:[\W\d]|^)(?:episodes?|[Сс]ерии:?)[ .]?[([]?(\d{1,3}(?:[ .+]*[&+][ .]?\d{1,3})+)(?:\W|$)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"[([]?(?:\D|^)(\d{1,3}[ .]?ao[ .]?\d{1,3})[)\]]?(?:\W|$)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"(?:[\W\d]|^)(?:e|eps?|episodes?|[Сс]ерии:?|\d+[xх])[ .]*[([]?(\d{1,3}(?:-\d{1,3})+)(?:\W|$)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"[st]\d{1,2}[. ]?[xх-]?[. ]?(?:e|x|х|ep|-|\.)[. ]?(\d{1,4})(?:[abc]|v0?[1-4]|\D|$)", regex.IGNORECASE), array(integer), {"remove": True})
+    parser.add_handler("episodes", regex.compile(r"\b[st]\d{2}(\d{2})\b", regex.IGNORECASE), array(integer))
+    parser.add_handler("episodes", regex.compile(r"(?:\W|^)(\d{1,3}(?:[ .]*~[ .]*\d{1,3})+)(?:\W|$)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"-\s(\d{1,3}[ .]*-[ .]*\d{1,3})(?!-\d)(?:\W|$)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"s\d{1,2}\s?\((\d{1,3}[ .]*-[ .]*\d{1,3})\)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"(?:^|\/)\d{1,2}-(\d{2})\b(?!-\d)"), array(integer))
+    parser.add_handler("episodes", regex.compile(r"(?<!\d-)\b\d{1,2}-(\d{2})(?=\.\w{2,4}$)"), array(integer))
+    parser.add_handler("episodes", regex.compile(r"(?<=^\[.+].+)[. ]+-[. ]+(\d{1,4})[. ]+(?=\W)", regex.IGNORECASE), array(integer))
+    parser.add_handler("episodes", regex.compile(r"(?<!(?:seasons?|[Сс]езони?)\W*)(?:[ .([-]|^)(\d{1,3}(?:[ .]?[,&+~][ .]?\d{1,3})+)(?:[ .)\]-]|$)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"(?<!(?:seasons?|[Сс]езони?)\W*)(?:[ .([-]|^)(\d{1,3}(?:-\d{1,3})+)(?:[ .)(\]]|-\D|$)", regex.IGNORECASE), range_func)
+    parser.add_handler("episodes", regex.compile(r"\bEp(?:isode)?\W+\d{1,2}\.(\d{1,3})\b", regex.IGNORECASE), array(integer))
+    parser.add_handler("episodes", regex.compile(r"(?:\b[ée]p?(?:isode)?|[Ээ]пизод|[Сс]ер(?:ии|ия|\.)?|cap(?:itulo)?|epis[oó]dio)[. ]?[-:#№]?[. ]?(\d{1,4})(?:[abc]|v0?[1-4]|\W|$)", regex.IGNORECASE), array(integer))
+    parser.add_handler("episodes", regex.compile(r"\b(\d{1,3})(?:-?я)?[ ._-]*(?:ser(?:i?[iyj]a|\b)|[Сс]ер(?:ии|ия|\.)?)", regex.IGNORECASE), array(integer))
+    parser.add_handler("episodes", regex.compile(r"(?:\D|^)\d{1,2}[. ]?[xх][. ]?(\d{1,3})(?:[abc]|v0?[1-4]|\D|$)"), array(integer))  # Fixed: Was catching `1.x265` as episode.
+    parser.add_handler("episodes", regex.compile(r"(?<=S\d{2}E)\d+", regex.IGNORECASE), array(integer))
+    parser.add_handler("episodes", regex.compile(r"[[(]\d{1,2}\.(\d{1,3})[)\]]"), array(integer))
+    parser.add_handler("episodes", regex.compile(r"\b[Ss]\d{1,2}[ .](\d{1,2})\b"), array(integer))
+    parser.add_handler("episodes", regex.compile(r"-\s?\d{1,2}\.(\d{2,3})\s?-"), array(integer))
+    parser.add_handler("episodes", regex.compile(r"(?<=\D|^)(\d{1,3})[. ]?(?:of|из|iz)[. ]?\d{1,3}(?=\D|$)", regex.IGNORECASE), array(integer))
+    parser.add_handler("episodes", regex.compile(r"\b\d{2}[ ._-](\d{2})(?:.F)?\.\w{2,4}$"), array(integer))
+    parser.add_handler("episodes", regex.compile(r"(?<!^)\[(\d{2,3})](?!(?:\.\w{2,4})?$)"), array(integer))
+    parser.add_handler("episodes", regex.compile(r"(\d+)(?=.?\[([A-Z0-9]{8})])", regex.IGNORECASE), array(integer))
+    parser.add_handler("episodes", regex.compile(r"(?<![xh])\b264\b|\b265\b", regex.IGNORECASE), array(integer), {"remove": True})
+    parser.add_handler("episodes", regex.compile(r"(?<!\bMovie\s-\s)(?<=\s-\s)\d+(?=\s[-(\s])"), array(integer), {"remove": True, "skipIfAlreadyFound": True})
+    parser.add_handler("episodes", regex.compile(r"(?:\W|^)(?:\d+)?(?:e|ep)(\d{1,3})(?:\W|$)", regex.IGNORECASE), array(integer))
+
+    def handle_episodes(context):
+        title = context["title"]
+        result = context.get("result", {})
+        matched = context.get("matched", {})
+
+        if "episodes" not in result:
+            start_indexes = [comp.get("match_index") for comp in [matched.get("year"), matched.get("seasons")] if comp and comp.get("match_index", None)]
+            end_indexes = [comp["match_index"] for comp in [matched.get("resolution"), matched.get("quality"), matched.get("codec"), matched.get("audio")] if comp and comp.get("match_index", None)]
+
+            start_index = min(start_indexes) if start_indexes else 0
+            end_index = min(end_indexes + [len(title)])
+
+            beginning_title = title[:end_index]
+            middle_title = title[start_index:end_index]
+
+            matches = regex.search(r"(?<!movie\W*|film\W*|^)(?:[ .]+-[ .]+|[([][ .]*)(\d{1,4})(?:a|b|v\d|\.\d)?(?:\W|$)(?!movie|film|\d+)", beginning_title, regex.IGNORECASE) or regex.search(r"^(?:[([-][ .]?)?(\d{1,4})(?:a|b|v\d)?(?:\W|$)(?!movie|film)", middle_title, regex.IGNORECASE)
+
+            if matches:
+                episode_numbers = [int(num) for num in regex.findall(r"\d+", matches.group(1))]
+                result["episodes"] = episode_numbers
+                return {"match_index": title.index(matches.group(0))}
+
+        return None
+
+    parser.add_handler("episodes", handle_episodes)
+     */
+
+    // Episodes
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)(?:[\W\d]|^)e[ .]?[\(\[]?(\d{1,3}(?:[ .-]*(?:[&+]|e){1,2}[ .]?\d{1,3})+)(?:\W|$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)(?:[\W\d]|^)ep[ .]?[\(\[]?(\d{1,3}(?:[ .-]*(?:[&+]|ep){1,2}[ .]?\d{1,3})+)(?:\W|$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)(?:[\W\d]|^)\d+[xх][ .]?[\(\[]?(\d{1,3}(?:[ .]?[xх][ .]?\d{1,3})+)(?:\W|$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)(?:[\W\d]|^)(?:episodes?|[Сс]ерии:?)[ .]?[\(\[]?(\d{1,3}(?:[ .+]*[&+][ .]?\d{1,3})+)(?:\W|$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)[\(\[]?(?:\D|^)(\d{1,3}[ .]?ao[ .]?\d{1,3})[\)\]]?(?:\W|$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)(?:[\W\d]|^)(?:e|eps?|episodes?|[Сс]ерии:?|\d+[xх])[ .]*[\(\[]?(\d{1,3}(?:-\d{1,3})+)(?:\W|$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)[st]\d{1,2}[. ]?[xх-]?[. ]?(?:e|x|х|ep|-|\.)[. ]?(\d{1,4})(?:[abc]|v0?[1-4]|\D|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)\b[st]\d{2}(\d{2})\b").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)(?:\W|^)(\d{1,3}(?:[ .]*~[ .]*\d{1,3})+)(?:\W|$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?i)-\s(\d{1,3}[ .]*-[ .]*\d{1,3})(?!-\d)(?:\W|$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?i)s\d{1,2}\s?\((\d{1,3}[ .]*-[ .]*\d{1,3})\)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?:^|\/)\d{1,2}-(\d{2})\b(?!-\d)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?<!\d-)\b\d{1,2}-(\d{2})(?=\.\w{2,4}$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)^\[.+].+[. ]+-[. ]+(\d{1,4})[. ]+(?=\W)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)(?:^|[ .\(\[-])(?!(?:seasons?|[Сс]езони?)\W)(\d{1,3}(?:[ .]?[,&+~][ .]?\d{1,3})+)(?:[ .\)\]-]|$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"(?i)(?:^|[ .\(\[-])(?!(?:seasons?|[Сс]езони?)\W)(\d{1,3}(?:-\d{1,3})+)(?:[ .\)\]]|-\D|$)").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?i)\bEp(?:isode)?\W+\d{1,2}\.(\d{1,3})\b").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?i)(?:\b[ée]p?(?:isode)?|[Ээ]пизод|[Сс]ер(?:ии|ия|\.)?|cap(?:itulo)?|epis[oó]dio)[. ]?[-:#№]?[. ]?(\d{1,4})(?:[abc]|v0?[1-4]|\W|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?i)\b(\d{1,3})(?:-?я)?[ ._-]*(?:ser(?:i?[iyj]a|\b)|[Сс]ер(?:ии|ия|\.)?)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?:\D|^)\d{1,2}[. ]?[xх][. ]?(\d{1,3})(?:[abc]|v0?[1-4]|\D|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?i)(?<=S\d{2}E)\d+").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |t| &mut t.episodes,
+        Regex::new(r"[\[\(]\d{1,2}\.(\d{1,3})[\)\]]").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"\b[Ss]\d{1,2}[ .](\d{1,2})\b").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"-\s?\d{1,2}\.(\d{2,3})\s?-").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?i)(?<=\D|^)(\d{1,3})[. ]?(?:of|из|iz)[. ]?\d{1,3}(?=\D|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"\b\d{2}[ ._-](\d{2})(?:.F)?\.\w{2,4}$").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?<!^)\[(\d{2,3})](?!(?:\.\w{2,4})?$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?i)(\d+)(?=.?\[([A-Z0-9]{8})])").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?i)(?<![xh])\b264\b|\b265\b").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?<!\bMovie\s-\s)(?<=\s-\s)\d+(?=\s[-(\s])").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "episodes",
+        |r| &mut r.episodes,
+        Regex::new(r"(?i)(?:\W|^)(?:\d+)?(?:e|ep)(\d{1,3})(?:\W|$)").unwrap(),
+        |v, _| Some(vec![v.parse().ok()?]),
+        RegexHandlerOptions::default(),
+    ));
+
+    lazy_static! {
+        static ref EPISODE_RE1: Regex =
+            Regex::new(r"(?i)(?:[ .]+-[ .]+|[\(\[][ .]*)(\d{1,4})(?:a|b|v\d|\.\d)?(?:\W|$)(?!movie|film|\d+)").unwrap(); // TODO: not 100% same (fails tests)
+            // Regex::new(r"(?i)(?:^|[ .]+-[ .]+|[\[\(][ .]*)(\d{1,4})(?:a|b|v\d|\.\d)?(?:\W|$)(?!(?:movie|film|\d+)(?:\W|$))").unwrap();
+        static ref EPISODE_RE2: Regex = Regex::new(r"(?i)^(?:[\[\(-][ .]?)?(\d{1,4})(?:a|b|v\d)?(?:\W|$)(?!movie|film)").unwrap();
+        static ref EPISODE_RE3: Regex = Regex::new(r"\d+").unwrap();
+    }
+    parser.add_handler(Handler::new("episodes", |context| {
+        if context.result.episodes.is_empty() {
+            let start_indexes = [
+                context.matched.get("year").map(|m| m.match_index),
+                context.matched.get("seasons").map(|m| m.match_index),
+            ]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>();
+
+            let end_indexes = [
+                context.matched.get("resolution").map(|m| m.match_index),
+                context.matched.get("quality").map(|m| m.match_index),
+                context.matched.get("codec").map(|m| m.match_index),
+                context.matched.get("audio").map(|m| m.match_index),
+            ]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>();
+
+            let start_index = start_indexes.iter().min().copied().unwrap_or(0);
+            let end_index = end_indexes.iter().min().copied().unwrap_or(context.title.len());
+
+            let beginning_title = &context.title[..end_index];
+            let middle_title = &context.title[start_index..end_index];
+
+            if let Some(captures) = EPISODE_RE1
+                .captures(beginning_title)
+                .ok()
+                .flatten()
+                .or_else(|| EPISODE_RE2.captures(middle_title).ok().flatten())
+            {
+                let episode_str = captures.get(1).unwrap().as_str();
+                let episode_numbers: Vec<i32> = EPISODE_RE3
+                    .find_iter(episode_str)
+                    .filter_map(|m| m.unwrap().as_str().parse().ok())
+                    .collect();
+
+                if !episode_numbers.is_empty() {
+                    context.result.episodes = episode_numbers;
+                    return Some(HandlerResult {
+                        raw_match: captures.get(0).unwrap().as_str().to_string(),
+                        match_index: context.title.find(captures.get(0).unwrap().as_str()).unwrap(),
+                        remove: false,
+                        skip_from_title: false,
+                    });
+                }
+            }
+        }
+        None
+    }));
 }
