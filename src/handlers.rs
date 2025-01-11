@@ -2,6 +2,7 @@ use fancy_regex::Regex;
 
 use crate::handler_wrapper::{Handler, RegexHandlerOptions};
 use crate::transforms;
+use lazy_static::lazy_static;
 
 pub fn add_default_handlers(parser: &mut super::Parser) {
     // Adult
@@ -1159,6 +1160,16 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler("bit_depth", regex.compile(r"(?:8|10|12)[-\.]?(?=bit)", regex.IGNORECASE), value("$1bit"), {"remove": True})
     parser.add_handler("bit_depth", regex.compile(r"\bhdr10\b", regex.IGNORECASE), value("10bit"))
     parser.add_handler("bit_depth", regex.compile(r"\bhi10\b", regex.IGNORECASE), value("10bit"))
+
+
+
+    def handle_bit_depth(context):
+        result = context["result"]
+        if "bit_depth" in result:
+            # Replace hyphens and spaces with nothing (effectively removing them)
+            result["bit_depth"] = result["bit_depth"].replace(" ", "").replace("-", "")
+
+    parser.add_handler("bit_depth", handle_bit_depth)
      */
 
     // Video depth
@@ -1201,4 +1212,267 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         }
         None
     }));
+
+    /*
+    # HDR
+    parser.add_handler("hdr", regex.compile(r"\bDV\b|dolby.?vision|\bDoVi\b", regex.IGNORECASE), uniq_concat(value("DV")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("hdr", regex.compile(r"HDR10(?:\+|[-\.\s]?plus)", regex.IGNORECASE), uniq_concat(value("HDR10+")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("hdr", regex.compile(r"\bHDR(?:10)?\b", regex.IGNORECASE), uniq_concat(value("HDR")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("hdr", regex.compile(r"\bSDR\b", regex.IGNORECASE), uniq_concat(value("SDR")), {"remove": True, "skipIfAlreadyFound": False})
+    */
+
+    // HDR
+    parser.add_handler(Handler::from_regex(
+        "hdr",
+        |t| &mut t.hdr,
+        Regex::new(r"(?i)\bDV\b|dolby.?vision|\bDoVi\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("DV"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "hdr",
+        |t| &mut t.hdr,
+        Regex::new(r"(?i)HDR10(?:\+|[-\.\s]?plus)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("HDR10+"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "hdr",
+        |t| &mut t.hdr,
+        Regex::new(r"(?i)\bHDR(?:10)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("HDR"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "hdr",
+        |t| &mut t.hdr,
+        Regex::new(r"(?i)\bSDR\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("SDR"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    # Codec
+    parser.add_handler("codec", regex.compile(r"\b[hx][\. \-]?264\b", regex.IGNORECASE), value("avc"), {"remove": True})
+    parser.add_handler("codec", regex.compile(r"\b[hx][\. \-]?265\b", regex.IGNORECASE), value("hevc"), {"remove": True})
+    parser.add_handler("codec", regex.compile(r"\bHEVC10(bit)?\b|\b[xh][\. \-]?265\b", regex.IGNORECASE), value("hevc"), {"remove": True})
+    parser.add_handler("codec", regex.compile(r"\bhevc(?:\s?10)?\b", regex.IGNORECASE), value("hevc"), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("codec", regex.compile(r"\bdivx|xvid\b", regex.IGNORECASE), value("xvid"), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("codec", regex.compile(r"\bavc\b", regex.IGNORECASE), value("avc"), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("codec", regex.compile(r"\bav1\b", regex.IGNORECASE), value("av1"), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("codec", regex.compile(r"\b(?:mpe?g\d*)\b", regex.IGNORECASE), value("mpeg"), {"remove": True, "skipIfAlreadyFound": False})
+
+    def handle_space_in_codec(context):
+        if context["result"].get("codec"):
+            context["result"]["codec"] = regex.sub("[ .-]", "", context["result"]["codec"])
+
+    parser.add_handler("codec", handle_space_in_codec)
+    */
+
+    // Codec
+    parser.add_handler(Handler::from_regex(
+        "codec",
+        |t| &mut t.codec,
+        Regex::new(r"(?i)\b[hx][\. \-]?264\b").unwrap(),
+        transforms::value("avc"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "codec",
+        |t| &mut t.codec,
+        Regex::new(r"(?i)\b[hx][\. \-]?265\b").unwrap(),
+        transforms::value("hevc"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "codec",
+        |t| &mut t.codec,
+        Regex::new(r"(?i)HEVC10(bit)?\b|\b[xh][\. \-]?265\b").unwrap(),
+        transforms::value("hevc"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "codec",
+        |t| &mut t.codec,
+        Regex::new(r"(?i)\bhevc(?:\s?10)?\b").unwrap(),
+        transforms::value("hevc"),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "codec",
+        |t| &mut t.codec,
+        Regex::new(r"(?i)\bdivx|xvid\b").unwrap(),
+        transforms::value("xvid"),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "codec",
+        |t| &mut t.codec,
+        Regex::new(r"(?i)\bavc\b").unwrap(),
+        transforms::value("avc"),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "codec",
+        |t| &mut t.codec,
+        Regex::new(r"(?i)\bav1\b").unwrap(),
+        transforms::value("av1"),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "codec",
+        |t| &mut t.codec,
+        Regex::new(r"(?i)\b(?:mpe?g\d*)\b").unwrap(),
+        transforms::value("mpeg"),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    lazy_static! {
+        static ref REMOVE_SPACE_AND_DASH: Regex = Regex::new(r"[ .-]+").unwrap();
+    }
+    parser.add_handler(Handler::new("codec", |context| {
+        if let Some(codec) = context.result.codec.clone() {
+            context.result.codec = Some(REMOVE_SPACE_AND_DASH.replace_all(&codec, "").to_string());
+        }
+        None
+    }));
+
+    /*
+    # Channels
+    parser.add_handler("channels", regex.compile(r"\bDDP?5[ \.\_]1\b", regex.IGNORECASE), uniq_concat(value("5.1")), {"remove": False})
+    parser.add_handler("channels", regex.compile(r"\b5\.1(ch)?\b", regex.IGNORECASE), uniq_concat(value("5.1")), {"remove": False})
+    parser.add_handler("channels", regex.compile(r"\b7[\.\- ]1(.?ch(annel)?)?\b", regex.IGNORECASE), uniq_concat(value("7.1")), {"remove": False})
+    parser.add_handler("channels", regex.compile(r"\b2\.0\b", regex.IGNORECASE), uniq_concat(value("2.0")), {"remove": False})
+    parser.add_handler("channels", regex.compile(r"\bstereo\b", regex.IGNORECASE), uniq_concat(value("stereo")), {"remove": False})
+    parser.add_handler("channels", regex.compile(r"\bmono\b", regex.IGNORECASE), uniq_concat(value("mono")), {"remove": False})
+    parser.add_handler("channels", regex.compile(r"\b(?:x[2-4]|5[\W]1(?:x[2-4])?)\b", regex.IGNORECASE), uniq_concat(value("5.1")), {"remove": True})
+    parser.add_handler("channels", regex.compile(r"\b2\.0(?:x[2-4])\b", regex.IGNORECASE), uniq_concat(value("2.0")), {"remove": True})
+     */
+
+    // Channels
+    parser.add_handler(Handler::from_regex(
+        "channels",
+        |t| &mut t.channels,
+        Regex::new(r"(?i)\bDDP?5[ \.\_]1\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("5.1"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "channels",
+        |t| &mut t.channels,
+        Regex::new(r"(?i)\b5\.1(?:ch)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("5.1"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "channels",
+        |t| &mut t.channels,
+        Regex::new(r"(?i)\b7[\.\- ]1(?:\.?ch(?:annel)?)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("7.1"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "channels",
+        |t| &mut t.channels,
+        Regex::new(r"(?i)\b2\.0\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("2.0"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "channels",
+        |t| &mut t.channels,
+        Regex::new(r"(?i)\bstereo\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("stereo"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "channels",
+        |t| &mut t.channels,
+        Regex::new(r"(?i)\bmono\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("mono"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "channels",
+        |t| &mut t.channels,
+        Regex::new(r"(?i)\b(?:x[2-4]|5[\W]1(?:x[2-4])?)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("5.1"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "channels",
+        |t| &mut t.channels,
+        Regex::new(r"(?i)\b2\.0(?:x[2-4])\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("2.0"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
 }
