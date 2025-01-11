@@ -816,4 +816,339 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
+
+    // Quality
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\b(?:HD[ .-]*)?T(?:ELE)?S(?:YNC)?(?:Rip)?\b").unwrap(),
+        transforms::value("TeleSync"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\b(?:HD[ .-]*)?T(?:ELE)?C(?:INE)?(?:Rip)?\b").unwrap(),
+        transforms::value("TeleCine"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\b(?:DVD?|BD|BR)?[ .-]*Scr(?:eener)?\b").unwrap(),
+        transforms::value("SCR"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bP(?:RE)?-?(HD|DVD)(?:Rip)?\b").unwrap(),
+        transforms::value("SCR"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bBlu[ .-]*Ray\b(?=.*remux)").unwrap(),
+        transforms::value("BluRay REMUX"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)(?:BD|BR|UHD)[- ]?remux").unwrap(),
+        transforms::value("BluRay REMUX"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)remux.*\bBlu[ .-]*Ray\b").unwrap(),
+        transforms::value("BluRay REMUX"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bremux\b").unwrap(),
+        transforms::value("REMUX"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bBlu[ .-]*Ray\b(?![ .-]*Rip)").unwrap(),
+        transforms::value("BluRay"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bUHD[ .-]*Rip\b").unwrap(),
+        transforms::value("UHDRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bHD[ .-]*Rip\b").unwrap(),
+        transforms::value("HDRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bMicro[ .-]*HD\b").unwrap(),
+        transforms::value("HDRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\b(?:BR|Blu[ .-]*Ray)[ .-]*Rip\b").unwrap(),
+        transforms::value("BRRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bBD[ .-]*Rip\b|\bBDR\b|\bBD-RM\b|\[BD[\]\) .,-]|\(BD[\]\) .,-]").unwrap(),
+        transforms::value("BDRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\b(?:HD[ .-]*)?DVD[ .-]*Rip\b").unwrap(),
+        transforms::value("DVDRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bVHS[ .-]*Rip?\b").unwrap(),
+        transforms::value("VHSRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bDVD(?:R\d?|.*Mux)?\b").unwrap(),
+        transforms::value("DVD"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bVHS\b").unwrap(),
+        transforms::value("VHS"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bPPVRip\b").unwrap(),
+        transforms::value("PPVRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bHD.?TV.?Rip\b").unwrap(),
+        transforms::value("HDTVRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bHD.?TV\b").unwrap(),
+        transforms::value("HDTV"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bDVB[ .-]*(?:Rip)?\b").unwrap(),
+        transforms::value("HDTV"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bSAT[ .-]*Rips?\b").unwrap(),
+        transforms::value("SATRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bTVRips?\b").unwrap(),
+        transforms::value("TVRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bR5\b").unwrap(),
+        transforms::value("R5"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\b(?:DL|WEB|BD|BR)MUX\b").unwrap(),
+        transforms::value("WEBMux"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bWEB[ .-]*Rip\b").unwrap(),
+        transforms::value("WEBRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bWEB[ .-]?DL[ .-]?Rip\b").unwrap(),
+        transforms::value("WEB-DLRip"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bWEB[ .-]*(DL|.BDrip|.DLRIP)\b").unwrap(),
+        transforms::value("WEB-DL"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\b(?<!\w.)WEB\b|\bWEB(?!([ \.\-\(\],]+\d))\b").unwrap(),
+        transforms::value("WEB"),
+        RegexHandlerOptions {
+            remove: true,
+            skip_from_title: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\b(?:H[DQ][ .-]*)?CAM(?!.?(S|E|\()\d+)(?:H[DQ])?(?:[ .-]*Rip|Rp)?\b").unwrap(),
+        transforms::value("CAM"),
+        RegexHandlerOptions {
+            remove: true,
+            skip_from_title: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\b(?:H[DQ][ .-]*)?S[ \.\-]print").unwrap(),
+        transforms::value("CAM"),
+        RegexHandlerOptions {
+            remove: true,
+            skip_from_title: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "quality",
+        |t| &mut t.quality,
+        Regex::new(r"(?i)\bPDTV\b").unwrap(),
+        transforms::value("PDTV"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
 }
