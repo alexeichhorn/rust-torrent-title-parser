@@ -591,22 +591,6 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         },
     ));
 
-    /*
-
-          # Edition
-       parser.add_handler("edition", regex.compile(r"\b\d{2,3}(th)?[\.\s\-\+_\/(),]Anniversary[\.\s\-\+_\/(),](Edition|Ed)?\b", regex.IGNORECASE), value("Anniversary Edition"), {"remove": True})
-       parser.add_handler("edition", regex.compile(r"\bUltimate[\.\s\-\+_\/(),]Edition\b", regex.IGNORECASE), value("Ultimate Edition"), {"remove": True})
-       parser.add_handler("edition", regex.compile(r"\bExtended[\.\s\-\+_\/(),]Director\"?s\b", regex.IGNORECASE), value("Directors Cut"), {"remove": True})
-       parser.add_handler("edition", regex.compile(r"\b(custom.?)?Extended\b", regex.IGNORECASE), value("Extended Edition"), {"remove": True})
-       parser.add_handler("edition", regex.compile(r"\bDirector\"?s[\.\s\-\+_\/(),]Cut\b", regex.IGNORECASE), value("Directors Cut"), {"remove": True})
-       parser.add_handler("edition", regex.compile(r"\bCollector\"?s\b", regex.IGNORECASE), value("Collectors Edition"), {"remove": True})
-       parser.add_handler("edition", regex.compile(r"\bTheatrical\b", regex.IGNORECASE), value("Theatrical"), {"remove": True})
-       parser.add_handler("edition", regex.compile(r"\bUncut\b", regex.IGNORECASE), value("Uncut"), {"remove": True})
-       parser.add_handler("edition", regex.compile(r"\bIMAX\b", regex.IGNORECASE), value("IMAX"), {"remove": True})
-       parser.add_handler("edition", regex.compile(r"\b\.Diamond\.\b", regex.IGNORECASE), value("Diamond Edition"), {"remove": True})
-       parser.add_handler("edition", regex.compile(r"\bRemaster(?:ed)?\b", regex.IGNORECASE), value("Remastered"), {"remove": True, "skipIfAlreadyFound": True})
-    */
-
     // Edition
     parser.add_handler(Handler::from_regex(
         "edition",
@@ -713,6 +697,38 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         |t| &mut t.edition,
         Regex::new(r"(?i)\bRemaster(?:ed)?\b").unwrap(),
         transforms::value("Remastered"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    // Upscaled
+    parser.add_handler(Handler::from_regex(
+        "upscaled",
+        |t| &mut t.upscaled,
+        Regex::new(r"\b(?:AI.?)?(Upscal(ed?|ing)|Enhanced?)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "upscaled",
+        |t| &mut t.upscaled,
+        Regex::new(r"\b(?:iris2|regrade|ups(uhd|fhd|hd|4k))\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "upscaled",
+        |t| &mut t.upscaled,
+        Regex::new(r"\b\.AI\.\b").unwrap(),
+        transforms::true_if_found,
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
