@@ -150,6 +150,31 @@ pub fn resolution_transform(value: &str, _: &Option<String>) -> Option<Option<St
     None
 }
 
+lazy_static! {
+    static ref RANGE_REGEX: Regex = Regex::new(r"\d+").unwrap();
+}
+
+// Parse a range of numbers from the input string
+pub fn range_func(value: &str, _: &Vec<i32>) -> Option<Vec<i32>> {
+    let numbers: Vec<i32> = RANGE_REGEX
+        .find_iter(value)
+        .flat_map(|m| m.unwrap().as_str().parse::<i32>())
+        .collect();
+
+    if numbers.len() == 2 && numbers[0] < numbers[1] {
+        // Create range from first to last number inclusive
+        Some((numbers[0]..=numbers[1]).collect())
+    } else if numbers.len() > 2 && numbers.windows(2).all(|w| w[0] + 1 == w[1]) {
+        // All numbers form a consecutive sequence
+        Some(numbers)
+    } else if numbers.len() == 1 {
+        // Single number
+        Some(numbers)
+    } else {
+        None
+    }
+}
+
 // region: Chaining
 
 pub fn chain_transforms<T, F1, F2, R1>(transform1: F1, transform2: F2) -> impl Fn(&str, &T) -> Option<T>

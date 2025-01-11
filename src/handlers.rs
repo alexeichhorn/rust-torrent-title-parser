@@ -1,6 +1,6 @@
 use fancy_regex::Regex;
 
-use crate::handler_wrapper::{Handler, RegexHandlerOptions};
+use crate::handler_wrapper::{Handler, HandlerResult, Match, RegexHandlerOptions};
 use crate::transforms;
 use lazy_static::lazy_static;
 
@@ -1472,6 +1472,419 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         transforms::chain_transforms(transforms::replace_value("2.0"), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: true,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    # Audio
+    parser.add_handler("audio", regex.compile(r"\bDDP5[ \.\_]1\b", regex.IGNORECASE), uniq_concat(value("Dolby Digital Plus")), {"remove": True, "skipIfFirst": True})
+    parser.add_handler("audio", regex.compile(r"\b(?!.+HR)(DTS.?HD.?Ma(ster)?|DTS.?X)\b", regex.IGNORECASE), uniq_concat(value("DTS Lossless")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("audio", regex.compile(r"\bDTS(?!(.?HD.?Ma(ster)?|.X)).?(HD.?HR|HD)?\b", regex.IGNORECASE), uniq_concat(value("DTS Lossy")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("audio", regex.compile(r"\b(Dolby.?)?Atmos\b", regex.IGNORECASE), uniq_concat(value("Atmos")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("audio", regex.compile(r"\b(TrueHD|\.True\.)\b", regex.IGNORECASE), uniq_concat(value("TrueHD")), {"remove": True, "skipIfAlreadyFound": False, "skipFromTitle": True})
+    parser.add_handler("audio", regex.compile(r"\bTRUE\b"), uniq_concat(value("TrueHD")), {"remove": True, "skipIfAlreadyFound": False, "skipFromTitle": True})
+    parser.add_handler("audio", regex.compile(r"\bFLAC(?:\+?2\.0)?(x[2-4])?\b", regex.IGNORECASE), uniq_concat(value("FLAC")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("audio", regex.compile(r"\bEAC-?3(?:[. -]?[256]\.[01])?\b", regex.IGNORECASE), uniq_concat(value("EAC3")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("audio", regex.compile(r"\bAC-?3(x2)?(?:[ .-](5\.1)?[x+]2\.?0?x?3?)?\b", regex.IGNORECASE), uniq_concat(value("AC3")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("audio", regex.compile(r"\b5\.1(ch)?\b", regex.IGNORECASE), uniq_concat(value("AC3")), {"remove": True, "skipIfAlreadyFound": True})
+    parser.add_handler("audio", regex.compile(r"\b(DD2?[\+p]2?(.?5.1)?|DD Plus|Dolby Digital Plus)\b", regex.IGNORECASE), uniq_concat(value("Dolby Digital Plus")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("audio", regex.compile(r"\b(DD|Dolby.?Digital.?)2?(5.?1)?(?!.?(Plus|P|\+))\b", regex.IGNORECASE), uniq_concat(value("Dolby Digital")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("audio", regex.compile(r"\bDolbyD\b", regex.IGNORECASE), uniq_concat(value("Dolby Digital")), {"remove": True, "skipIfFirst": True})
+    parser.add_handler("audio", regex.compile(r"\bQ?Q?AAC(x?2)?\b", regex.IGNORECASE), uniq_concat(value("AAC")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("audio", regex.compile(r"\b(H[DQ])?.?(Clean.?Aud(io)?)\b", regex.IGNORECASE), uniq_concat(value("HQ Clean Audio")), {"remove": True, "skipIfAlreadyFound": False})
+    */
+
+    // Audio
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\bDDP5[ \.\_]1\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("Dolby Digital Plus"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_first: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\b(?!.+HR)(DTS.?HD.?Ma(ster)?|DTS.?X)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("DTS Lossless"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\bDTS(?!(.?HD.?Ma(ster)?|.X)).?(HD.?HR|HD)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("DTS Lossy"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\b(Dolby.?)?Atmos\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("Atmos"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\b(TrueHD|\.True\.)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("TrueHD"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            skip_from_title: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"\bTRUE\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("TrueHD"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            skip_from_title: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\bFLAC(?:\+?2\.0)?(x[2-4])?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("FLAC"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\bEAC-?3(?:[. -]?[256]\.[01])?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("EAC3"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\bAC-?3(x2)?(?:[ .-](5\.1)?[x+]2\.?0?x?3?)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("AC3"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\b5\.1(ch)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("AC3"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\b(DD2?[\+p]2?(.?5.1)?|DD Plus|Dolby Digital Plus)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("Dolby Digital Plus"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\b(DD|Dolby.?Digital.?)2?(5.?1)?(?!.?(Plus|P|\+))\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("Dolby Digital"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\bDolbyD\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("Dolby Digital"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_first: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\bQ?Q?AAC(x?2)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("AAC"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |t| &mut t.audio,
+        Regex::new(r"(?i)\b(H[DQ])?.?(Clean.?Aud(io)?)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("HQ Clean Audio"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    # Group
+    parser.add_handler("group", regex.compile(r"- ?(?!\d+$|S\d+|\d+x|ep?\d+|[^[]+]$)([^\-. []+[^\-. [)\]\d][^\-. [)\]]*)(?:\[[\w.-]+])?(?=\.\w{2,4}$|$)", regex.IGNORECASE), none, {"remove": False})
+
+    # Container
+    parser.add_handler("container", regex.compile(r"\.?[\[(]?\b(MKV|AVI|MP4|WMV|MPG|MPEG)\b[\])]?", regex.IGNORECASE), lowercase)
+    */
+
+    // Group
+    parser.add_handler(Handler::from_regex(
+        "group",
+        |t| &mut t.group,
+        Regex::new(
+            r"(?i)- ?(?!\d+$|S\d+|\d+x|ep?\d+|[^\[]+\]$)([^\-\. \[]+[^\-\. \[\)\]\d][^\-\. \[\)\]]*)(?:\[[\w.-]+])?(?=\.\w{2,4}$|$)",
+        )
+        .unwrap(),
+        transforms::identity,
+        RegexHandlerOptions {
+            remove: false,
+            ..Default::default()
+        },
+    ));
+
+    // Container
+    parser.add_handler(Handler::from_regex(
+        "container",
+        |t| &mut t.container,
+        Regex::new(r"(?i)\.?[\[(]?\b(MKV|AVI|MP4|WMV|MPG|MPEG)\b[\])]?").unwrap(),
+        transforms::lowercase,
+        RegexHandlerOptions::default(),
+    ));
+
+    /*
+    # Volume
+    parser.add_handler("volumes", regex.compile(r"\bvol(?:s|umes?)?[. -]*(?:\d{1,2}[., +/\\&-]+)+\d{1,2}\b", regex.IGNORECASE), range_func, {"remove": True})
+
+    def handle_volumes(context):
+        title = context["title"]
+        result = context["result"]
+        matched = context["matched"]
+
+        start_index = matched.get("year", {}).get("match_index", 0)
+        match = regex.search(r"\bvol(?:ume)?[. -]*(\d{1,2})", title[start_index:], regex.IGNORECASE)
+
+        if match:
+            matched["volumes"] = {"match": match.group(0), "match_index": match.start()}
+            result["volumes"] = [int(match.group(1))]
+            return {"raw_match": match.group(0), "match_index": match.start() + start_index, "remove": True}
+        return None
+
+    parser.add_handler("volumes", handle_volumes)
+    */
+
+    // Volume
+    parser.add_handler(Handler::from_regex(
+        "volumes",
+        |t| &mut t.volumes,
+        Regex::new(r"(?i)\bvol(?:s|umes?)?[. -]*(?:\d{1,2}[., +/\\&-]+)+\d{1,2}\b").unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    lazy_static! {
+        static ref VOLUME_REGEX: Regex = Regex::new(r"(?i)\bvol(?:ume)?[. -]*(\d{1,2})").unwrap();
+    }
+
+    parser.add_handler(Handler::new("volumes", |context| {
+        let title = &context.title;
+        let start_index = context.matched.get("year").map(|y| y.match_index).unwrap_or(0);
+
+        if let Some(cap) = VOLUME_REGEX.captures(&title[start_index..]).ok().flatten() {
+            let m = cap.get(0).unwrap();
+            let vol = cap.get(1).unwrap().as_str().parse::<i32>().unwrap();
+
+            context.matched.insert(
+                "volumes".to_string(),
+                Match {
+                    raw_match: m.as_str().to_string(),
+                    match_index: m.start(),
+                },
+            );
+
+            context.result.volumes = vec![vol];
+
+            return Some(HandlerResult {
+                raw_match: m.as_str().to_string(),
+                match_index: m.start() + start_index,
+                remove: true,
+                skip_from_title: false,
+            });
+        }
+        None
+    }));
+
+    /*
+    # Pre-Language
+    parser.add_handler("languages", regex.compile(r"\b(temporadas?|completa)\b", regex.IGNORECASE), uniq_concat(value("es")), {"skipIfAlreadyFound": False})
+    */
+
+    // Pre-Language
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |t| &mut t.languages,
+        Regex::new(r"(?i)\b(temporadas?|completa)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    # Complete
+    parser.add_handler("complete", regex.compile(r"(?:\bthe\W)?(?:\bcomplete|collection|dvd)?\b[ .]?\bbox[ .-]?set\b", regex.IGNORECASE), boolean)
+    parser.add_handler("complete", regex.compile(r"(?:\bthe\W)?(?:\bcomplete|collection|dvd)?\b[ .]?\bmini[ .-]?series\b", regex.IGNORECASE), boolean)
+    parser.add_handler("complete", regex.compile(r"(?:\bthe\W)?(?:\bcomplete|full|all)\b.*\b(?:series|seasons|collection|episodes|set|pack|movies)\b", regex.IGNORECASE), boolean)
+    parser.add_handler("complete", regex.compile(r"\b(?:series|seasons|movies?)\b.*\b(?:complete|collection)\b", regex.IGNORECASE), boolean)
+    parser.add_handler("complete", regex.compile(r"(?:\bthe\W)?\bultimate\b[ .]\bcollection\b", regex.IGNORECASE), boolean, {"skipIfAlreadyFound": False})
+    parser.add_handler("complete", regex.compile(r"\bcollection\b.*\b(?:set|pack|movies)\b", regex.IGNORECASE), boolean)
+    parser.add_handler("complete", regex.compile(r"\bcollection\b", regex.IGNORECASE), boolean, {"skipFromTitle": True})
+    parser.add_handler("complete", regex.compile(r"duology|trilogy|quadr[oi]logy|tetralogy|pentalogy|hexalogy|heptalogy|anthology", regex.IGNORECASE), boolean, {"skipIfAlreadyFound": False})
+    parser.add_handler("complete", regex.compile(r"\bcompleta\b", regex.IGNORECASE), boolean, {"remove": True})
+    parser.add_handler("complete", regex.compile(r"\bsaga\b", regex.IGNORECASE), boolean, {"skipFromTitle": True, "skipIfAlreadyFound": True})
+     */
+
+    // Complete
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"(?i)(?:\bthe\W)?(?:\bcomplete|collection|dvd)?\b[ .]?\bbox[ .-]?set\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"(?i)(?:\bthe\W)?(?:\bcomplete|collection|dvd)?\b[ .]?\bmini[ .-]?series\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"(?i)(?:\bthe\W)?(?:\bcomplete|full|all)\b.*\b(?:series|seasons|collection|episodes|set|pack|movies)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"(?i)\b(?:series|seasons|movies?)\b.*\b(?:complete|collection)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"(?i)(?:\bthe\W)?\bultimate\b[ .]\bcollection\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"(?i)\bcollection\b.*\b(?:set|pack|movies)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions::default(),
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"(?i)\bcollection\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            skip_from_title: true,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"(?i)duology|trilogy|quadr[oi]logy|tetralogy|pentalogy|hexalogy|heptalogy|anthology").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"(?i)\bcompleta\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "complete",
+        |t| &mut t.complete,
+        Regex::new(r"(?i)\bsaga\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: true,
             ..Default::default()
         },
     ));
