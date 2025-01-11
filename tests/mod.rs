@@ -8,6 +8,7 @@ mod test_date;
 mod test_dubbed;
 mod test_edition;
 mod test_episode_code;
+mod test_episodes;
 mod test_extras;
 mod test_group;
 mod test_hardcoded;
