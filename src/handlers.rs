@@ -1151,4 +1151,54 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
+
+    /*
+
+    # Video depth
+    parser.add_handler("bit_depth", regex.compile(r"\bhevc\s?10\b", regex.IGNORECASE), value("10bit"))
+    parser.add_handler("bit_depth", regex.compile(r"(?:8|10|12)[-\.]?(?=bit)", regex.IGNORECASE), value("$1bit"), {"remove": True})
+    parser.add_handler("bit_depth", regex.compile(r"\bhdr10\b", regex.IGNORECASE), value("10bit"))
+    parser.add_handler("bit_depth", regex.compile(r"\bhi10\b", regex.IGNORECASE), value("10bit"))
+     */
+
+    // Video depth
+    parser.add_handler(Handler::from_regex(
+        "bit_depth",
+        |t| &mut t.bit_depth,
+        Regex::new(r"(?i)\bhevc\s?10\b").unwrap(),
+        transforms::value("10bit"),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "bit_depth",
+        |t| &mut t.bit_depth,
+        Regex::new(r"(?i)(?:8|10|12)[-\.]?(?=bit)").unwrap(),
+        transforms::value("$1bit"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "bit_depth",
+        |t| &mut t.bit_depth,
+        Regex::new(r"(?i)\bhdr10\b").unwrap(),
+        transforms::value("10bit"),
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "bit_depth",
+        |t| &mut t.bit_depth,
+        Regex::new(r"(?i)\bhi10\b").unwrap(),
+        transforms::value("10bit"),
+        RegexHandlerOptions::default(),
+    ));
+
+    parser.add_handler(Handler::new("bit_dpeth", |context| {
+        if let Some(bit_depth) = context.result.bit_depth.clone() {
+            // Remove hypens and spaces
+            context.result.bit_depth = Some(bit_depth.replace("-", "").replace(" ", ""));
+        }
+        None
+    }));
 }
