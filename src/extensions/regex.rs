@@ -1,52 +1,112 @@
-use pcre2::bytes::{CaptureMatches, Captures, Match, Matches, Regex, RegexBuilder};
-use pcre2::Error;
+use regress::*;
 
 pub trait RegexStringExt
 where
     Self: Sized,
 {
-    fn new_utf(pattern: &str) -> Result<Self, Error>;
-    fn is_match_str(&self, subject: &str) -> Result<bool, Error>;
-    fn find_str<'s>(&self, subject: &'s str) -> Result<Option<Match<'s>>, Error>;
-    fn find_iter_str<'r, 's>(&'r self, subject: &'s str) -> Matches<'r, 's>;
-    fn captures_str<'s>(&self, subject: &'s str) -> Result<Option<Captures<'s>>, Error>;
-    fn captures_iter_str<'r, 's>(&'r self, subject: &'s str) -> CaptureMatches<'r, 's>;
+    fn case_insensitive(pattern: &str) -> Result<Self, Error>;
+
+    fn find_str<'s>(&self, subject: &'s str) -> Option<StringMatch<'s>>;
+    fn find_iter_str<'r, 's>(&'r self, subject: &'s str) -> StringMatches<'s, 'r, 's>;
 }
 
 impl RegexStringExt for Regex {
-    fn new_utf(pattern: &str) -> Result<Self, Error> {
-        RegexBuilder::new().utf(true).build(pattern)
+    fn case_insensitive(pattern: &str) -> Result<Self, Error> {
+        let flags = Flags {
+            icase: true,
+            ..Default::default()
+        };
+        Regex::with_flags(pattern, flags)
     }
 
-    fn is_match_str(&self, subject: &str) -> Result<bool, Error> {
-        self.is_match(subject.as_bytes())
+    fn find_str<'s>(&self, subject: &'s str) -> Option<StringMatch<'s>> {
+        let raw_match = self.find(subject)?;
+        Some(StringMatch {
+            m: raw_match,
+            full_input: subject,
+        })
     }
 
-    fn find_str<'s>(&self, subject: &'s str) -> Result<Option<Match<'s>>, Error> {
-        self.find(subject.as_bytes())
-    }
-
-    fn find_iter_str<'r, 's>(&'r self, subject: &'s str) -> Matches<'r, 's> {
-        self.find_iter(subject.as_bytes())
-    }
-
-    fn captures_str<'s>(&self, subject: &'s str) -> Result<Option<Captures<'s>>, Error> {
-        self.captures(subject.as_bytes())
-    }
-
-    fn captures_iter_str<'r, 's>(&'r self, subject: &'s str) -> CaptureMatches<'r, 's> {
-        self.captures_iter(subject.as_bytes())
+    fn find_iter_str<'r, 't>(&'r self, subject: &'t str) -> StringMatches<'t, 'r, 't> {
+        let raw_matches = self.find_iter(subject);
+        StringMatches {
+            matches: raw_matches,
+            full_input: subject,
+        }
     }
 }
 
 // - Match
 
-pub trait MatchExt<'a> {
-    fn as_str(&self) -> &'a str;
+pub struct StringMatch<'a> {
+    pub m: Match,
+    pub full_input: &'a str,
 }
 
-impl<'a> MatchExt<'a> for Match<'a> {
-    fn as_str(&self) -> &'a str {
-        std::str::from_utf8(self.as_bytes()).unwrap_or_default()
+impl<'a> StringMatch<'a> {
+    pub fn as_str(&self) -> &str {
+        &self.full_input[self.m.range()]
+    }
+
+    /// Doesn't panic if index out of bounds, just returns None
+    #[inline]
+    fn safe_group(&self, idx: usize) -> Option<Range> {
+        if idx == 0 {
+            Some(self.m.range.clone())
+        } else {
+            self.m.captures.get(idx - 1).cloned().flatten()
+        }
+    }
+
+    pub fn group(&self, idx: usize) -> Option<GroupMatch<'a>> {
+        if let Some(group_range) = self.safe_group(idx) {
+            Some(GroupMatch {
+                range: group_range,
+                full_input: self.full_input,
+            })
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub fn start(&self) -> usize {
+        self.m.start()
+    }
+
+    #[inline]
+    pub fn end(&self) -> usize {
+        self.m.end()
+    }
+}
+
+// Group
+
+pub struct GroupMatch<'a> {
+    pub range: Range,
+    pub full_input: &'a str,
+}
+
+impl<'a> GroupMatch<'a> {
+    pub fn as_str(&self) -> &'a str {
+        &self.full_input[self.range.clone()]
+    }
+}
+
+// Match Iterator
+
+pub struct StringMatches<'a, 'r, 't> {
+    pub matches: Matches<'r, 't>,
+    pub full_input: &'a str,
+}
+
+impl<'a, 'r, 't> Iterator for StringMatches<'a, 'r, 't> {
+    type Item = StringMatch<'a>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.matches.next().map(|m| StringMatch {
+            m,
+            full_input: self.full_input,
+        })
     }
 }

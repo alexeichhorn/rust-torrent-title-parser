@@ -1,12 +1,9 @@
 use std::collections::HashMap;
 
 use lazy_static::lazy_static;
-use pcre2::bytes::Regex;
+use regress::Regex;
 
-use crate::{
-    extensions::regex::{MatchExt, RegexStringExt},
-    ParsedTitle,
-};
+use crate::{extensions::regex::RegexStringExt, ParsedTitle};
 
 #[derive(Debug)]
 pub struct Match {
@@ -48,7 +45,7 @@ impl Default for RegexHandlerOptions {
 }
 
 lazy_static! {
-    static ref BEFORE_TITLE_MATCH_REGEX: Regex = Regex::new_utf(r"^\[(.*?)\]").unwrap();
+    static ref BEFORE_TITLE_MATCH_REGEX: Regex = Regex::new(r"^\[(.*?)\]").unwrap();
 }
 
 type HandlerFn = dyn Fn(HandlerContext) -> Option<HandlerResult> + Send + Sync;
@@ -70,41 +67,6 @@ impl Handler {
         Handler::new_old(name.to_string(), Box::new(handler))
     }
 
-    /*
-
-    def handler(context: Dict[str, Any]) -> Union[Dict[str, Any], None]:
-       title = context["title"]
-       result = context["result"]
-       matched = context["matched"]
-
-       if name in result and options.get("skipIfAlreadyFound", False):
-           return None
-       if DEBUG_HANDLER is True or (type(DEBUG_HANDLER) is str and DEBUG_HANDLER in name):
-           print(name, "Try to match " + title, "To " + reg_exp.pattern)
-       match = reg_exp.search(title)
-       if DEBUG_HANDLER is True or (type(DEBUG_HANDLER) is str and DEBUG_HANDLER in name):
-           print("Matched " + str(match))
-       if match:
-           raw_match = match.group(0)
-           clean_match = match.group(1) if len(match.groups()) >= 1 else raw_match
-           sig = inspect.signature(transformer)
-           param_count = len(sig.parameters)
-           transformed = transformer(clean_match or raw_match, *([result.get(name)] if param_count > 1 else []))
-           if type(transformed) is str:
-               transformed = transformed.strip()
-
-           before_title_match = BEFORE_TITLE_MATCH_REGEX.match(title)
-           is_before_title = before_title_match is not None and raw_match in before_title_match.group(1)
-
-           other_matches = {k: v for k, v in matched.items() if k != name}
-           is_skip_if_first = options.get("skipIfFirst", False) and other_matches and all(match.start() < other_matches[k]["match_index"] for k in other_matches)
-
-           if transformed is not None and not is_skip_if_first:
-               matched[name] = matched.get(name, {"raw_match": raw_match, "match_index": match.start()})
-               result[name] = options.get("value", transformed)
-               return {"raw_match": raw_match, "match_index": match.start(), "remove": options.get("remove", False), "skip_from_title": is_before_title or options.get("skipFromTitle", False)}
-       return None
-    */
     pub fn from_regex<T: PropertyIsSet>(
         name: &'static str,
         accessor: impl Fn(&mut ParsedTitle) -> &mut T + Send + Sync + 'static,
@@ -118,18 +80,17 @@ impl Handler {
                 return None;
             }
 
-            if let Ok(Some(captures)) = regex.captures_str(context.title) {
-                let m = captures.get(0).unwrap();
+            if let Some(m) = regex.find_str(context.title) {
                 let raw_match = m.as_str(); // will always succeed (as it is equal to whole match)
-                let clean_match = captures.get(1).map(|m| m.as_str()).unwrap_or(raw_match);
+                let clean_match = m.group(1).map(|m| m.as_str()).unwrap_or(raw_match);
 
                 let Some(transformed) = transform(clean_match, field) else {
                     return None;
                 };
 
-                let before_title_match = BEFORE_TITLE_MATCH_REGEX.captures_str(context.title).unwrap_or(None);
+                let before_title_match = BEFORE_TITLE_MATCH_REGEX.find_str(context.title);
                 let is_before_title = if let Some(before_title_match) = before_title_match {
-                    before_title_match.get(1).unwrap().as_str().contains(raw_match)
+                    before_title_match.group(1).unwrap().as_str().contains(raw_match)
                 } else {
                     false
                 };
