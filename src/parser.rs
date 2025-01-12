@@ -131,6 +131,7 @@ impl Parser {
             });
 
             println!("match result for {}: {:?}", handler.get_name(), match_result);
+            println!("title: {}", title);
 
             let Some(match_result) = match_result else {
                 continue;

@@ -1,9 +1,12 @@
 use std::collections::HashMap;
 
-use fancy_regex::Regex;
 use lazy_static::lazy_static;
+use pcre2::bytes::Regex;
 
-use crate::ParsedTitle;
+use crate::{
+    extensions::regex::{MatchExt, RegexStringExt},
+    ParsedTitle,
+};
 
 #[derive(Debug)]
 pub struct Match {
@@ -45,7 +48,7 @@ impl Default for RegexHandlerOptions {
 }
 
 lazy_static! {
-    static ref BEFORE_TITLE_MATCH_REGEX: Regex = Regex::new(r"^\[(.*?)\]").unwrap();
+    static ref BEFORE_TITLE_MATCH_REGEX: Regex = Regex::new_utf(r"^\[(.*?)\]").unwrap();
 }
 
 type HandlerFn = dyn Fn(HandlerContext) -> Option<HandlerResult> + Send + Sync;
@@ -115,7 +118,7 @@ impl Handler {
                 return None;
             }
 
-            if let Ok(Some(captures)) = regex.captures(context.title) {
+            if let Ok(Some(captures)) = regex.captures_str(context.title) {
                 let m = captures.get(0).unwrap();
                 let raw_match = m.as_str(); // will always succeed (as it is equal to whole match)
                 let clean_match = captures.get(1).map(|m| m.as_str()).unwrap_or(raw_match);
@@ -124,7 +127,7 @@ impl Handler {
                     return None;
                 };
 
-                let before_title_match = BEFORE_TITLE_MATCH_REGEX.captures(context.title).unwrap_or(None);
+                let before_title_match = BEFORE_TITLE_MATCH_REGEX.captures_str(context.title).unwrap_or(None);
                 let is_before_title = if let Some(before_title_match) = before_title_match {
                     before_title_match.get(1).unwrap().as_str().contains(raw_match)
                 } else {

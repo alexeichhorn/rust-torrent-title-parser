@@ -1,8 +1,8 @@
 use std::str::FromStr;
 
 use chrono::NaiveDate;
-use fancy_regex::Regex;
 use lazy_static::lazy_static;
+use regex::Regex;
 
 lazy_static! {
     static ref SANITIZER_REGEX: Regex = Regex::new(r"\W+").unwrap();
@@ -156,10 +156,7 @@ lazy_static! {
 
 // Parse a range of numbers from the input string
 pub fn range_func(value: &str, _: &Vec<i32>) -> Option<Vec<i32>> {
-    let numbers: Vec<i32> = RANGE_REGEX
-        .find_iter(value)
-        .flat_map(|m| m.unwrap().as_str().parse::<i32>())
-        .collect();
+    let numbers: Vec<i32> = RANGE_REGEX.find_iter(value).flat_map(|m| m.as_str().parse::<i32>()).collect();
 
     if numbers.len() == 2 && numbers[0] < numbers[1] {
         // Create range from first to last number inclusive

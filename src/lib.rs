@@ -1,5 +1,6 @@
 use thiserror::Error;
 
+mod extensions;
 mod handler_wrapper;
 mod handlers;
 mod parser;
