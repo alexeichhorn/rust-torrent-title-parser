@@ -8,6 +8,7 @@ where
 
     fn find_str<'s>(&self, subject: &'s str) -> Option<StringMatch<'s>>;
     fn find_iter_str<'r, 's>(&'r self, subject: &'s str) -> StringMatches<'s, 'r, 's>;
+    fn contains_match(&self, subject: &str) -> bool;
 }
 
 impl RegexStringExt for Regex {
@@ -33,6 +34,10 @@ impl RegexStringExt for Regex {
             matches: raw_matches,
             full_input: subject,
         }
+    }
+
+    fn contains_match(&self, subject: &str) -> bool {
+        self.find(subject).is_some()
     }
 }
 

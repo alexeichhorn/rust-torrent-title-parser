@@ -136,11 +136,11 @@ fn test_languages_detection() {
         ("Much Loved (2015) - DVDRip x265 HEVC - ARAB-ITA-FRE AUDIO (ENG S", vec!["en", "fr", "it", "ar"]),
         ("42.2013.720p.BluRay.x264.HD4Ar Arab subtitle", vec!["ar"]),
         ("Fauda.S01.HEBREW.1080p.NF.WEBRip.DD5.1.x264-TrollHD[rartv]", vec!["he"]),
-        ("madagascar 720p hebrew dubbed.mkv", vec!["Hebrew"]),
-        ("Into.the.Night.S01E04.Ayaz.1080p.NF.WEB-DL.DDP5.1.x264-NTG_track17_[heb].srt", vec!["Hebrew"]),
-        ("The.Protector.2018.S03.TURKISH.WEBRip.x264-ION10", vec!["Turkish"]),
-        ("Recep Ivedik 6 (2020) NETFLIX 720p WEBDL (Turkish) - ExtremlymTorrents", vec!["Turkish"]),
-        ("The Insider*1999*[DVD5][PAL][ENG, POL, sub. ROM, TUR]", vec!["English", "Polish", "Romanian", "Turkish"]),
+        ("madagascar 720p hebrew dubbed.mkv", vec!["he"]),
+        ("Into.the.Night.S01E04.Ayaz.1080p.NF.WEB-DL.DDP5.1.x264-NTG_track17_[heb].srt", vec!["he"]),
+        ("The.Protector.2018.S03.TURKISH.WEBRip.x264-ION10", vec!["tr"]),
+        ("Recep Ivedik 6 (2020) NETFLIX 720p WEBDL (Turkish) - ExtremlymTorrents", vec!["tr"]),
+        ("The Insider*1999*[DVD5][PAL][ENG, POL, sub. ROM, TUR]", vec!["en", "pl", "ro", "tr"]),
         ("Japanese.Story.2003.1080p.WEBRip.x264-RARBG", vec![]),
         ("[ Torrent9.cz ] The.InBetween.S01E10.FiNAL.HDTV.XviD-EXTREME.avi", vec![]),
         ("Thai Massage (2022) 720p PDVDRip x264 AAC.mkv", vec![]),
@@ -163,38 +163,6 @@ fn test_languages_detection() {
         assert_eq!(
             result.languages, expected_languages,
             "Incorrect languages detected for {}: Got {:?}, expected {:?}",
-            input, result.languages, expected_languages
-        );
-    }
-}
-
-#[test]
-fn test_translate_languages() {
-    let test_cases = vec![
-        ("madagascar 720p hebrew dubbed.mkv", vec!["Hebrew"]),
-        (
-            "Into.the.Night.S01E04.Ayaz.1080p.NF.WEB-DL.DDP5.1.x264-NTG_track17_[heb].srt",
-            vec!["Hebrew"],
-        ),
-        ("The.Protector.2018.S03.TURKISH.WEBRip.x264-ION10", vec!["Turkish"]),
-        (
-            "Recep Ivedik 6 (2020) NETFLIX 720p WEBDL (Turkish) - ExtremlymTorrents",
-            vec!["Turkish"],
-        ),
-        (
-            "The Insider*1999*[DVD5][PAL][ENG, POL, sub. ROM, TUR]",
-            vec!["English", "Polish", "Romanian", "Turkish"],
-        ),
-        ("Japanese.Story.2003.1080p.WEBRip.x264-RARBG", vec![]),
-        ("[ Torrent9.cz ] The.InBetween.S01E10.FiNAL.HDTV.XviD-EXTREME.avi", vec![]),
-        ("Thai Massage (2022) 720p PDVDRip x264 AAC.mkv", vec![]),
-    ];
-
-    for (input, expected_languages) in test_cases {
-        let result = parse_title(input).unwrap();
-        assert_eq!(
-            result.languages, expected_languages,
-            "Incorrect translated languages detected for {}: Got {:?}, expected {:?}",
             input, result.languages, expected_languages
         );
     }

@@ -2493,4 +2493,1580 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         }
         None
     }));
+
+    /*
+    # Country Code
+    parser.add_handler("country", regex.compile(r"\b(US|UK)\b"), value("$1"))
+     */
+
+    // disabled for now (probably only for 'The Office')
+    // Country Code
+    /*parser.add_handler(Handler::from_regex(
+        "country",
+        |r| &mut r.country,
+        Regex::new(r"\b(US|UK)\b").unwrap(),
+        |v, _| Some(vec![v.to_string()]),
+        RegexHandlerOptions::default(),
+    ));*/
+
+    /*
+    # Languages (ISO 639-1 Standardized)
+    parser.add_handler("languages", regex.compile(r"\bengl?(?:sub[A-Z]*)?\b", regex.IGNORECASE), uniq_concat(value("en")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\beng?sub[A-Z]*\b", regex.IGNORECASE), uniq_concat(value("en")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bing(?:l[eéê]s)?\b", regex.IGNORECASE), uniq_concat(value("en")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\besub\b", regex.IGNORECASE), uniq_concat(value("en")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\benglish\W+(?:subs?|sdh|hi)\b", regex.IGNORECASE), uniq_concat(value("en")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\beng?\b", regex.IGNORECASE), uniq_concat(value("en")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\benglish?\b", regex.IGNORECASE), uniq_concat(value("en")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:JP|JAP|JPN)\b", regex.IGNORECASE), uniq_concat(value("ja")), {"skipIfAlreadyFound": False})
+    */
+
+    // - Languages (ISO 639-1 Standardized)
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bengl?(?:sub[A-Z]*)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\beng?sub[A-Z]*\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bing(?:l[eéê]s)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\besub\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\benglish\W+(?:subs?|sdh|hi)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\beng?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\benglish?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:JP|JAP|JPN)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ja"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    parser.add_handler("languages", regex.compile(r"\b(japanese|japon[eê]s)\b", regex.IGNORECASE), uniq_concat(value("ja")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:KOR|kor[ .-]?sub)\b", regex.IGNORECASE), uniq_concat(value("ko")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(korean|coreano)\b", regex.IGNORECASE), uniq_concat(value("ko")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:traditional\W*chinese|chinese\W*traditional)(?:\Wchi)?\b", regex.IGNORECASE), uniq_concat(value("zh")), {"skipIfAlreadyFound": False, "remove": True})
+    parser.add_handler("languages", regex.compile(r"\bzh-hant\b", regex.IGNORECASE), uniq_concat(value("zh")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:mand[ae]rin|ch[sn])\b", regex.IGNORECASE), uniq_concat(value("zh")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"(?<!shang-?)\bCH(?:I|T)\b", regex.IGNORECASE), uniq_concat(value("zh")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(chinese|chin[eê]s)\b", regex.IGNORECASE), uniq_concat(value("zh")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bzh-hans\b", regex.IGNORECASE), uniq_concat(value("zh")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bFR(?:ench|a|e|anc[eê]s)?\b", regex.IGNORECASE), uniq_concat(value("fr")), {"skipIfAlreadyFound": False})
+    */
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(japanese|japon[eê]s)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ja"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:KOR|kor[ .-]?sub)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ko"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(korean|coreano)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ko"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:traditional\W*chinese|chinese\W*traditional)(?:\Wchi)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bzh-hant\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:mand[ae]rin|ch[sn])\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"(?<!shang-?)\bCH(?:I|T)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(chinese|chin[eê]s)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bzh-hans\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bFR(?:ench|a|e|anc[eê]s)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("fr"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    parser.add_handler("languages", regex.compile(r"\b(VOST(?:FR?|A)?)\b", regex.IGNORECASE), uniq_concat(value("fr")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(VF[FQIB2]?|(TRUE|SUB)?.?FRENCH|(VOST)?FR2?)\b", regex.IGNORECASE), uniq_concat(value("fr")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bspanish\W?latin|american\W*(?:spa|esp?)", regex.IGNORECASE), uniq_concat(value("la")), {"skipFromTitle": True, "skipIfAlreadyFound": False, "remove": True})
+    parser.add_handler("languages", regex.compile(r"\b(?:\bla\b.+(?:cia\b))", regex.IGNORECASE), uniq_concat(value("es")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:audio.)?lat(?:in?|ino)?\b", regex.IGNORECASE), uniq_concat(value("la")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:audio.)?(?:ESP?|spa|(en[ .]+)?espa[nñ]ola?|castellano)\b", regex.IGNORECASE), uniq_concat(value("es")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bes(?=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})\b", regex.IGNORECASE), uniq_concat(value("es")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?<=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})es\b", regex.IGNORECASE), uniq_concat(value("es")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?<=[ .,/-]+[A-Z]{2}[ .,/-]+)es(?=[ .,/-]+[A-Z]{2}[ .,/-]+)\b", regex.IGNORECASE), uniq_concat(value("es")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bes(?=\.(?:ass|ssa|srt|sub|idx)$)", regex.IGNORECASE), uniq_concat(value("es")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bspanish\W+subs?\b", regex.IGNORECASE), uniq_concat(value("es")), {"skipIfAlreadyFound": False})
+    */
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(VOST(?:FR?|A)?)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("fr"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(VF[FQIB2]?|(TRUE|SUB)?.?FRENCH|(VOST)?FR2?)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("fr"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bspanish\W?latin|american\W*(?:spa|esp?)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("la"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:\bla\b.+(?:cia\b))").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:audio.)?lat(?:in?|ino)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("la"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:audio.)?(?:ESP?|spa|(en[ .]+)?espa[nñ]ola?|castellano)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bes(?=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?<=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})es\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?<=[ .,/-]+[A-Z]{2}[ .,/-]+)es(?=[ .,/-]+[A-Z]{2}[ .,/-]+)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bes(?=\.(?:ass|ssa|srt|sub|idx)$)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bspanish\W+subs?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    parser.add_handler("languages", regex.compile(r"\b(spanish|espanhol)\b", regex.IGNORECASE), uniq_concat(value("es")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:p[rt]|en|port)[. (\\/-]*BR\b", regex.IGNORECASE), uniq_concat(value("pt")), {"skipIfAlreadyFound": False, "remove": True})
+    parser.add_handler("languages", regex.compile(r"\bbr(?:a|azil|azilian)\W+(?:pt|por)\b", regex.IGNORECASE), uniq_concat(value("pt")), {"skipIfAlreadyFound": False, "remove": True})
+    parser.add_handler("languages", regex.compile(r"\b(?:leg(?:endado|endas?)?|dub(?:lado)?|portugu[eèê]se?)[. -]*BR\b", regex.IGNORECASE), uniq_concat(value("pt")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bleg(?:endado|endas?)\b", regex.IGNORECASE), uniq_concat(value("pt")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bportugu[eèê]s[ea]?\b", regex.IGNORECASE), uniq_concat(value("pt")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bPT[. -]*(?:PT|ENG?|sub(?:s|titles?))\b", regex.IGNORECASE), uniq_concat(value("pt")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bpt(?=\.(?:ass|ssa|srt|sub|idx)$)", regex.IGNORECASE), uniq_concat(value("pt")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bpor\b", regex.IGNORECASE), uniq_concat(value("pt")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b-?ITA\b", regex.IGNORECASE), uniq_concat(value("it")), {"remove": True, "skipIfAlreadyFound": False})
+    */
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(spanish|espanhol)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:p[rt]|en|port)[. (\\/-]*BR\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bbr(?:a|azil|azilian)\W+(?:pt|por)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:leg(?:endado|endas?)?|dub(?:lado)?|portugu[eèê]se?)[. -]*BR\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bleg(?:endado|endas?)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bportugu[eèê]s[ea]?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bPT[. -]*(?:PT|ENG?|sub(?:s|titles?))\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bpt(?=\.(?:ass|ssa|srt|sub|idx)$)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bpor\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b-?ITA\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("it"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    parser.add_handler("languages", regex.compile(r"\b(?<!w{3}\.\w+\.)IT(?=[ .,/-]+(?:[a-zA-Z]{2}[ .,/-]+){2,})\b"), uniq_concat(value("it")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bit(?=\.(?:ass|ssa|srt|sub|idx)$)", regex.IGNORECASE), uniq_concat(value("it")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bitaliano?\b", regex.IGNORECASE), uniq_concat(value("it")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bgreek[ .-]*(?:audio|lang(?:uage)?|subs?(?:titles?)?)?\b", regex.IGNORECASE), uniq_concat(value("el")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:GER|DEU)\b", regex.IGNORECASE), uniq_concat(value("de")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bde(?=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})\b", regex.IGNORECASE), uniq_concat(value("de")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?<=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})de\b", regex.IGNORECASE), uniq_concat(value("de")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?<=[ .,/-]+[A-Z]{2}[ .,/-]+)de(?=[ .,/-]+[A-Z]{2}[ .,/-]+)\b", regex.IGNORECASE), uniq_concat(value("de")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bde(?=\.(?:ass|ssa|srt|sub|idx)$)", regex.IGNORECASE), uniq_concat(value("de")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(german|alem[aã]o)\b", regex.IGNORECASE), uniq_concat(value("de")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bRUS?\b", regex.IGNORECASE), uniq_concat(value("ru")), {"skipIfAlreadyFound": False})
+    */
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::new(r"\b(?<!w{3}\.\w+\.)IT(?=[ .,/-]+(?:[a-zA-Z]{2}[ .,/-]+){2,})\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("it"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bit(?=\.(?:ass|ssa|srt|sub|idx)$)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("it"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bitaliano?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("it"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bgreek[ .-]*(?:audio|lang(?:uage)?|subs?(?:titles?)?)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("el"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:GER|DEU)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bde(?=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?<=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})de\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?<=[ .,/-]+[A-Z]{2}[ .,/-]+)de(?=[ .,/-]+[A-Z]{2}[ .,/-]+)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bde(?=\.(?:ass|ssa|srt|sub|idx)$)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(german|alem[aã]o)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bRUS?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ru"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    parser.add_handler("languages", regex.compile(r"\b(russian|russo)\b", regex.IGNORECASE), uniq_concat(value("ru")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bUKR\b", regex.IGNORECASE), uniq_concat(value("uk")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bukrainian\b", regex.IGNORECASE), uniq_concat(value("uk")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bhin(?:di)?\b", regex.IGNORECASE), uniq_concat(value("hi")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)tel(?!\W*aviv)|telugu)\b", regex.IGNORECASE), uniq_concat(value("te")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bt[aâ]m(?:il)?\b", regex.IGNORECASE), uniq_concat(value("ta")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)MAL(?:ay)?|malayalam)\b", regex.IGNORECASE), uniq_concat(value("ml")), {"remove": True, "skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)KAN(?:nada)?|kannada)\b", regex.IGNORECASE), uniq_concat(value("kn")), {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)MAR(?:a(?:thi)?)?|marathi)\b", regex.IGNORECASE), uniq_concat(value("mr")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)GUJ(?:arati)?|gujarati)\b", regex.IGNORECASE), uniq_concat(value("gu")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)PUN(?:jabi)?|punjabi)\b", regex.IGNORECASE), uniq_concat(value("pa")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)BEN(?!.\bThe|and|of\b)(?:gali)?|bengali)\b", regex.IGNORECASE), uniq_concat(value("bn")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?<!YTS\.)LT\b"), uniq_concat(value("lt")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    */
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(russian|russo)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ru"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bUKR\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("uk"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bukrainian\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("uk"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bhin(?:di)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("hi"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)tel(?!\W*aviv)|telugu)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("te"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bt[aâ]m(?:il)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ta"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)MAL(?:ay)?|malayalam)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ml"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)KAN(?:nada)?|kannada)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("kn"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)MAR(?:a(?:thi)?)?|marathi)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("mr"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)GUJ(?:arati)?|gujarati)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("gu"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)PUN(?:jabi)?|punjabi)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pa"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)BEN(?!.\bThe|and|of\b)(?:gali)?|bengali)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("bn"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::new(r"\b(?<!YTS\.)LT\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("lt"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    parser.add_handler("languages", regex.compile(r"\blithuanian\b", regex.IGNORECASE), uniq_concat(value("lt")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\blatvian\b", regex.IGNORECASE), uniq_concat(value("lv")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bestonian\b", regex.IGNORECASE), uniq_concat(value("et")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)PL|pol)\b", regex.IGNORECASE), uniq_concat(value("pl")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(polish|polon[eê]s|polaco)\b", regex.IGNORECASE), uniq_concat(value("pl")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bCZ[EH]?\b", regex.IGNORECASE), uniq_concat(value("cs")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bczech\b", regex.IGNORECASE), uniq_concat(value("cs")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bslo(?:vak|vakian|subs|[\]_)]?\.\w{2,4}$)\b", regex.IGNORECASE), uniq_concat(value("sk")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bHU\b"), uniq_concat(value("hu")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bHUN(?:garian)?\b", regex.IGNORECASE), uniq_concat(value("hu")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bROM(?:anian)?\b", regex.IGNORECASE), uniq_concat(value("ro")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bRO(?=[ .,/-]*(?:[A-Z]{2}[ .,/-]+)*sub)", regex.IGNORECASE), uniq_concat(value("ro")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bbul(?:garian)?\b", regex.IGNORECASE), uniq_concat(value("bg")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    */
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\blithuanian\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("lt"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\blatvian\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("lv"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bestonian\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("et"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)PL|pol)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pl"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(polish|polon[eê]s|polaco)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("pl"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bCZ[EH]?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("cs"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bczech\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("cs"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bslo(?:vak|vakian|subs|[\]_)]?\.\w{2,4}$)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("sk"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::new(r"\bHU\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("hu"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bHUN(?:garian)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("hu"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bROM(?:anian)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ro"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bRO(?=[ .,/-]*(?:[A-Z]{2}[ .,/-]+)*sub)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ro"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bbul(?:garian)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("bg"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    parser.add_handler("languages", regex.compile(r"\b(?:srp|serbian)\b", regex.IGNORECASE), uniq_concat(value("sr")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:HRV|croatian)\b", regex.IGNORECASE), uniq_concat(value("hr")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bHR(?=[ .,/-]*(?:[A-Z]{2}[ .,/-]+)*sub)\b", regex.IGNORECASE), uniq_concat(value("hr")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bslovenian\b", regex.IGNORECASE), uniq_concat(value("sl")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)NL|dut|holand[eê]s)\b", regex.IGNORECASE), uniq_concat(value("nl")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bdutch\b", regex.IGNORECASE), uniq_concat(value("nl")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bflemish\b", regex.IGNORECASE), uniq_concat(value("nl")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:DK|danska|dansub|nordic)\b", regex.IGNORECASE), uniq_concat(value("da")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(danish|dinamarqu[eê]s)\b", regex.IGNORECASE), uniq_concat(value("da")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bdan\b(?=.*\.(?:srt|vtt|ssa|ass|sub|idx)$)", regex.IGNORECASE), uniq_concat(value("da")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)FI|finsk|finsub|nordic)\b", regex.IGNORECASE), uniq_concat(value("fi")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bfinnish\b", regex.IGNORECASE), uniq_concat(value("fi")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    */
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:srp|serbian)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("sr"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:HRV|croatian)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("hr"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bHR(?=[ .,/-]*(?:[A-Z]{2}[ .,/-]+)*sub)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("hr"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bslovenian\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("sl"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)NL|dut|holand[eê]s)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("nl"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bdutch\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("nl"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bflemish\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("nl"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:DK|danska|dansub|nordic)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("da"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(danish|dinamarqu[eê]s)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("da"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bdan\b(?=.*\.(?:srt|vtt|ssa|ass|sub|idx)$)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("da"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)FI|finsk|finsub|nordic)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("fi"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bfinnish\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("fi"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    parser.add_handler("languages", regex.compile(r"\b(?:(?<!w{3}\.\w+\.)SE|swe|swesubs?|sv(?:ensk)?|nordic)\b", regex.IGNORECASE), uniq_concat(value("sv")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(swedish|sueco)\b", regex.IGNORECASE), uniq_concat(value("sv")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:NOR|norsk|norsub|nordic)\b", regex.IGNORECASE), uniq_concat(value("no")), {"skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(norwegian|noruegu[eê]s|bokm[aå]l|nob|nor(?=[\]_)]?\.\w{2,4}$))\b", regex.IGNORECASE), uniq_concat(value("no")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:arabic|[aá]rabe|ara)\b", regex.IGNORECASE), uniq_concat(value("ar")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\barab.*(?:audio|lang(?:uage)?|sub(?:s|titles?)?)\b", regex.IGNORECASE), uniq_concat(value("ar")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bar(?=\.(?:ass|ssa|srt|sub|idx)$)", regex.IGNORECASE), uniq_concat(value("ar")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:turkish|tur(?:co)?)\b", regex.IGNORECASE), uniq_concat(value("tr")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(TİVİBU|tivibu|bitturk(.net)?|turktorrent)\b", regex.IGNORECASE), uniq_concat(value("tr")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    */
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)SE|swe|swesubs?|sv(?:ensk)?|nordic)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("sv"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(swedish|sueco)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("sv"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:NOR|norsk|norsub|nordic)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("no"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(norwegian|noruegu[eê]s|bokm[aå]l|nob|nor(?=[\]_)]?\.\w{2,4}$))\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("no"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:arabic|[aá]rabe|ara)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ar"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\barab.*(?:audio|lang(?:uage)?|sub(?:s|titles?)?)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ar"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bar(?=\.(?:ass|ssa|srt|sub|idx)$)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ar"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:turkish|tur(?:co)?)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("tr"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(TİVİBU|tivibu|bitturk(.net)?|turktorrent)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("tr"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    parser.add_handler("languages", regex.compile(r"\bvietnamese\b|\bvie(?=[\]_)]?\.\w{2,4}$)", regex.IGNORECASE), uniq_concat(value("vi")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bind(?:onesian)?\b", regex.IGNORECASE), uniq_concat(value("id")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(thai|tailand[eê]s)\b", regex.IGNORECASE), uniq_concat(value("th")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(THA|tha)\b"), uniq_concat(value("th")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(?:malay|may(?=[\]_)]?\.\w{2,4}$)|(?<=subs?\([a-z,]+)may)\b", regex.IGNORECASE), uniq_concat(value("ms")), {"skipIfFirst": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\bheb(?:rew|raico)?\b", regex.IGNORECASE), uniq_concat(value("he")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+    parser.add_handler("languages", regex.compile(r"\b(persian|persa)\b", regex.IGNORECASE), uniq_concat(value("fa")), {"skipFromTitle": True, "skipIfAlreadyFound": False})
+     */
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bvietnamese\b|\bvie(?=[\]_)]?\.\w{2,4}$)").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("vi"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bind(?:onesian)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("id"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(thai|tailand[eê]s)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("th"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::new(r"\b(THA|tha)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("th"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(?:malay|may(?=[\]_)]?\.\w{2,4}$)|(?<=subs?\([a-z,]+)may)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("ms"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_if_first: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\bheb(?:rew|raico)?\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("he"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"\b(persian|persa)\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("fa"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    parser.add_handler("languages", regex.compile(r"[\u3040-\u30ff]+", regex.IGNORECASE), uniq_concat(value("ja")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # japanese
+    parser.add_handler("languages", regex.compile(r"[\u3400-\u4dbf]+", regex.IGNORECASE), uniq_concat(value("zh")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # chinese
+    parser.add_handler("languages", regex.compile(r"[\u4e00-\u9fff]+", regex.IGNORECASE), uniq_concat(value("zh")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # chinese
+    parser.add_handler("languages", regex.compile(r"[\uf900-\ufaff]+", regex.IGNORECASE), uniq_concat(value("zh")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # chinese
+    parser.add_handler("languages", regex.compile(r"[\uff66-\uff9f]+", regex.IGNORECASE), uniq_concat(value("ja")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # japanese
+    parser.add_handler("languages", regex.compile(r"[\u0400-\u04ff]+", regex.IGNORECASE), uniq_concat(value("ru")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # russian
+    parser.add_handler("languages", regex.compile(r"[\u0600-\u06ff]+", regex.IGNORECASE), uniq_concat(value("ar")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # arabic
+    parser.add_handler("languages", regex.compile(r"[\u0750-\u077f]+", regex.IGNORECASE), uniq_concat(value("ar")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # arabic
+    parser.add_handler("languages", regex.compile(r"[\u0c80-\u0cff]+", regex.IGNORECASE), uniq_concat(value("kn")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # kannada
+    parser.add_handler("languages", regex.compile(r"[\u0d00-\u0d7f]+", regex.IGNORECASE), uniq_concat(value("ml")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # malayalam
+    parser.add_handler("languages", regex.compile(r"[\u0e00-\u0e7f]+", regex.IGNORECASE), uniq_concat(value("th")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # thai
+    parser.add_handler("languages", regex.compile(r"[\u0900-\u097f]+", regex.IGNORECASE), uniq_concat(value("hi")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # hindi
+    parser.add_handler("languages", regex.compile(r"[\u0980-\u09ff]+", regex.IGNORECASE), uniq_concat(value("bn")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # bengali
+    parser.add_handler("languages", regex.compile(r"[\u0a00-\u0a7f]+", regex.IGNORECASE), uniq_concat(value("gu")), {"skipFromTitle": True, "skipIfAlreadyFound": False})  # gujarati
+     */
+
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u3040-\u30ff]+").unwrap(), // japanese
+        transforms::chain_transforms(transforms::replace_value("ja"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u3400-\u4dbf]+").unwrap(), // chinese
+        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u4e00-\u9fff]+").unwrap(), // chinese
+        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\uf900-\ufaff]+").unwrap(), // chinese
+        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\uff66-\uff9f]+").unwrap(), // japanese
+        transforms::chain_transforms(transforms::replace_value("ja"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u0400-\u04ff]+").unwrap(), // russian
+        transforms::chain_transforms(transforms::replace_value("ru"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u0600-\u06ff]+").unwrap(), // arabic
+        transforms::chain_transforms(transforms::replace_value("ar"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u0750-\u077f]+").unwrap(), // arabic
+        transforms::chain_transforms(transforms::replace_value("ar"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u0c80-\u0cff]+").unwrap(), // kannada
+        transforms::chain_transforms(transforms::replace_value("kn"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u0d00-\u0d7f]+").unwrap(), // malayalam
+        transforms::chain_transforms(transforms::replace_value("ml"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u0e00-\u0e7f]+").unwrap(), // thai
+        transforms::chain_transforms(transforms::replace_value("th"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u0900-\u097f]+").unwrap(), // hindi
+        transforms::chain_transforms(transforms::replace_value("hi"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u0980-\u09ff]+").unwrap(), // bengali
+        transforms::chain_transforms(transforms::replace_value("bn"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "languages",
+        |r| &mut r.languages,
+        Regex::case_insensitive(r"[\u0a00-\u0a7f]+").unwrap(), // gujarati
+        transforms::chain_transforms(transforms::replace_value("gu"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            skip_from_title: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    def infer_language_based_on_naming(context):
+        title = context["title"]
+        result = context["result"]
+        matched = context["matched"]
+        if "languages" not in result or not any(lang in result["languages"] for lang in ["pt", "es"]):
+            # Checking if episode naming convention suggests Portuguese language
+            if (matched.get("episodes") and regex.search(r"capitulo|ao", matched["episodes"].get("raw_match", ""), regex.IGNORECASE)) or regex.search(r"dublado", title, regex.IGNORECASE):
+                result["languages"] = result.get("languages", []) + ["pt"]
+
+        return None
+
+    parser.add_handler("languages", infer_language_based_on_naming)
+     */
+
+    lazy_static! {
+        static ref PT_LANG_RE1: Regex = Regex::case_insensitive(r"capitulo|ao").unwrap();
+        static ref PT_LANG_RE2: Regex = Regex::case_insensitive(r"dublado").unwrap();
+    }
+
+    parser.add_handler(Handler::new("languages", |context| {
+        if !context.result.languages.iter().any(|lang| lang == "pt" || lang == "es") {
+            // Checking if episode naming convention suggests Portuguese language
+            if (context
+                .matched
+                .get("episodes")
+                .map(|e| &e.raw_match)
+                .map(|raw| PT_LANG_RE1.contains_match(raw))
+                .unwrap_or(false))
+                || PT_LANG_RE2.contains_match(&context.title)
+            {
+                context.result.languages.push("pt".to_string());
+            }
+        }
+        None
+    }));
 }
