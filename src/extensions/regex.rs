@@ -74,10 +74,10 @@ impl<'a> StringMatch<'a> {
         self.m.start()
     }
 
-    #[inline]
-    pub fn end(&self) -> usize {
-        self.m.end()
-    }
+    // #[inline]
+    // pub fn end(&self) -> usize {
+    //     self.m.end()
+    // }
 }
 
 // Group

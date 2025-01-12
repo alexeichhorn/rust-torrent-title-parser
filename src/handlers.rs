@@ -25,7 +25,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "scene",
         |t| &mut t.scene,
-        Regex::new(r"(\b\d{3,4}p\b.*[_. ]WEB[_. ][^D][^L]\b|\b-(?:CAKES|GGEZ|GGWP|GLHF|GOSSIP|NAISU|KOGI|PECULATE|SLOT|EDITH|ETHEL|ELEANOR|B2B|SPAMnEGGS|FTP|DiRT|SYNCOPY|BAE|SuccessfulCrab|NHTFS|SURCODE|B0MBARDIERS)\b)").unwrap(), // removed positive/negative lookahead (compated to Python version)
+        Regex::new(r"^(?=.*(\b\d{3,4}p\b).*([_. ]WEB[_. ])(?!DL)\b)|\b(-CAKES|-GGEZ|-GGWP|-GLHF|-GOSSIP|-NAISU|-KOGI|-PECULATE|-SLOT|-EDITH|-ETHEL|-ELEANOR|-B2B|-SPAMnEGGS|-FTP|-DiRT|-SYNCOPY|-BAE|-SuccessfulCrab|-NHTFS|-SURCODE|-B0MBARDIERS)").unwrap(),
         transforms::true_if_found,
         RegexHandlerOptions {
             remove: false,
@@ -67,7 +67,8 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "extras",
         |t| &mut t.extras,
-        Regex::case_insensitive(r"\b(?:19\d{2}|20\d{2})\b.*?\bFeaturettes?\b|\bFeaturettes?\b(?!.*?\b(?:19\d{2}|20\d{2})\b)").unwrap(),
+        Regex::case_insensitive(r"(?:(?<=\b(?:19\d{2}|20\d{2})\b.*)\b(?:Featurettes?)\b|\bFeaturettes?\b(?!.*\b(?:19\d{2}|20\d{2})\b))")
+            .unwrap(),
         transforms::chain_transforms(transforms::replace_value("Featurette"), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
@@ -78,7 +79,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "extras",
         |t| &mut t.extras,
-        Regex::case_insensitive(r"\b(?:19\d{2}|20\d{2})\b.*?\bSample\b|\bSample\b(?!.*?\b(?:19\d{2}|20\d{2})\b)").unwrap(),
+        Regex::case_insensitive(r"(?:(?<=\b(?:19\d{2}|20\d{2})\b.*)\b(?:Sample)\b|\b(?:Sample)\b(?!.*\b(?:19\d{2}|20\d{2})\b))").unwrap(),
         transforms::chain_transforms(transforms::replace_value("Sample"), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
@@ -89,8 +90,10 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "extras",
         |t| &mut t.extras,
-        Regex::case_insensitive(r"\b(?:19\d{2}|20\d{2})\b.*?\bTrailers?\b|\bTrailers?\b(?!.*?\b(?:19\d{2}|20\d{2}|\.(?:Park|And))\b)")
-            .unwrap(),
+        Regex::case_insensitive(
+            r"(?:(?<=\b(?:19\d{2}|20\d{2})\b.*)\b(?:Trailers?)\b|\bTrailers?\b(?!.*\b(?:19\d{2}|20\d{2}|.(Park|And))\b))",
+        )
+        .unwrap(),
         transforms::chain_transforms(transforms::replace_value("Trailer"), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
@@ -151,7 +154,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "episode_code",
         |t| &mut t.episode_code,
-        Regex::new(r"[\[\(]([0-9A-Za-z]{8})[\]\)](?=\.[0-9A-Za-z]{1,5}$|$)").unwrap(),
+        Regex::new(r"[[(]([a-zA-Z0-9]{8})[\])](?=\.[a-zA-Z0-9]{1,5}$|$)").unwrap(),
         transforms::uppercase,
         RegexHandlerOptions {
             remove: true,
@@ -425,7 +428,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "trash",
         |t| &mut t.trash,
-        Regex::case_insensitive(r"(?:Deleted[ .-]*)?Scene(?:s)?\b").unwrap(),
+        Regex::case_insensitive(r"\b(?:Deleted[ .-]*)?Scene(?:s)?\b").unwrap(),
         transforms::true_if_found,
         RegexHandlerOptions {
             remove: true,
@@ -447,7 +450,8 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "date",
         |t| &mut t.date,
-        Regex::new(r"(?:\W|^)\[?(?:19[6-9]|20[012])[0-9][. \-/\\](?:0[1-9]|1[012])[. \-/\\](?:0[1-9]|[12][0-9]|3[01])\]?(?:\W|$)").unwrap(),
+        Regex::new(r"(?:\W|^)([[(]?(?:19[6-9]|20[012])[0-9]([. \-/\\])(?:0[1-9]|1[012])\2(?:0[1-9]|[12][0-9]|3[01])[\]\)]?)(?:\W|$)")
+            .unwrap(),
         transforms::date_from_format("%Y %m %d"),
         RegexHandlerOptions {
             remove: true,
@@ -490,7 +494,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "date",
         |t| &mut t.date,
-        Regex::case_insensitive(r"(?:\W|^)\[?(?:0?[1-9]|[12][0-9]|3[01])[. ]?(?:st|nd|rd|th)?[. \-/\\](?:feb(?:ruary)?|jan(?:uary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)[. \-/\\](?:19[7-9]|20[012])[0-9]\]?(?:\W|$)").unwrap(),
+        Regex::case_insensitive(r"(?:\W|^)([([]?(?:0?[1-9]|[12][0-9]|3[01])[. ]?(?:st|nd|rd|th)?([. \-/\\])(?:feb(?:ruary)?|jan(?:uary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\2(?:19[7-9]|20[012])[0-9][)\]]?)(?=\W|$)").unwrap(),
         transforms::date_from_formats(&[
             "%d %b %Y",      // regular format (9 Dec 2019)
             "%dst %b %Y",    // for 1st, 21st, 31st
@@ -543,7 +547,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "complete",
         |t| &mut t.complete,
-        Regex::new(r"[\[\(][ .]?((19\d|20[012])\d[ .]?-[ .]?\d{2})[ .]?[\]\)]").unwrap(), // year range
+        Regex::new(r"[([][ .]?((?:19\d|20[012])\d[ .]?-[ .]?\d{2})[ .]?[)\]]").unwrap(), // year range
         transforms::true_if_found,
         RegexHandlerOptions {
             remove: true,
@@ -574,20 +578,20 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
-    /*parser.add_handler(Handler::from_regex( // TODO: temporarily disabled as regex doesn't really work with fancy_regex
+    parser.add_handler(Handler::from_regex(
         "year",
         |t| &mut t.year,
-        Regex::case_insensitive(r"[([]?(?!^)(?:^|[^0-9])((?:19\d|20[012])\d)(?!\d|kbps)[)\]]?").unwrap(),
+        Regex::case_insensitive(r"[([]?(?!^)(?<!\d|Cap[. ]?)((?:19\d|20[012])\d)(?!\d|kbps)[)\]]?").unwrap(),
         transforms::parse::<i32>,
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
         },
-    ));*/
+    ));
     parser.add_handler(Handler::from_regex(
         "year",
         |t| &mut t.year,
-        Regex::case_insensitive(r"^[\[\(]?((?:19[0-9]|20[012])[0-9])(?![0-9]|kbps)[\]\)]?").unwrap(),
+        Regex::case_insensitive(r"^[([]?((?:19\d|20[012])\d)(?!\d|kbps)[)\]]?").unwrap(),
         transforms::parse::<i32>,
         RegexHandlerOptions {
             remove: true,
@@ -689,7 +693,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "edition",
         |t| &mut t.edition,
-        Regex::case_insensitive(r#"\b\.Diamond\.\b"#).unwrap(),
+        Regex::case_insensitive(r"\b\.Diamond\.\b").unwrap(),
         transforms::value("Diamond Edition"),
         RegexHandlerOptions {
             remove: true,
@@ -773,10 +777,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         |t| &mut t.retail,
         Regex::case_insensitive(r"\bRetail\b").unwrap(),
         transforms::true_if_found,
-        RegexHandlerOptions {
-            remove: true,
-            ..Default::default()
-        },
+        RegexHandlerOptions::default(),
     ));
 
     // Remastered
@@ -885,7 +886,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "quality",
         |t| &mut t.quality,
-        Regex::case_insensitive(r"remux.*\bBlu[ .-]*Ray\b").unwrap(),
+        Regex::case_insensitive(r"(?<=remux.*)\bBlu[ .-]*Ray\b").unwrap(),
         transforms::value("BluRay REMUX"),
         RegexHandlerOptions {
             remove: true,
@@ -955,7 +956,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "quality",
         |t| &mut t.quality,
-        Regex::case_insensitive(r"\bBD[ .-]*Rip\b|\bBDR\b|\bBD-RM\b|\[BD[\]\) .,-]|\(BD[\]\) .,-]").unwrap(),
+        Regex::case_insensitive(r"\bBD[ .-]*Rip\b|\bBDR\b|\bBD-RM\b|[[(]BD[\]) .,-]").unwrap(),
         transforms::value("BDRip"),
         RegexHandlerOptions {
             remove: true,
@@ -1411,7 +1412,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "channels",
         |t| &mut t.channels,
-        Regex::case_insensitive(r"\b5\.1(?:ch)?\b").unwrap(),
+        Regex::case_insensitive(r"\b5\.1(ch)?\b").unwrap(),
         transforms::chain_transforms(transforms::replace_value("5.1"), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: false,
@@ -1421,7 +1422,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "channels",
         |t| &mut t.channels,
-        Regex::case_insensitive(r"\b7[\.\- ]1(?:\.?ch(?:annel)?)?\b").unwrap(),
+        Regex::case_insensitive(r"\b7[\.\- ]1(.?ch(annel)?)?\b").unwrap(),
         transforms::chain_transforms(transforms::replace_value("7.1"), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: false,
@@ -1679,10 +1680,8 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "group",
         |t| &mut t.group,
-        Regex::case_insensitive(
-            r"- ?(?!\d+$|S\d+|\d+x|ep?\d+|[^\[]+\]$)([^\-\. \[]+[^\-\. \[\)\]\d][^\-\. \[\)\]]*)(?:\[[\w.-]+])?(?=\.\w{2,4}$|$)",
-        )
-        .unwrap(),
+        Regex::case_insensitive(r"- ?(?!\d+$|S\d+|\d+x|ep?\d+|[^[]+]$)([^\-. []+[^\-. [)\]\d][^\-. [)\]]*)(?:\[[\w.-]+])?(?=\.\w{2,4}$|$)")
+            .unwrap(),
         transforms::identity,
         RegexHandlerOptions {
             remove: false,
@@ -1936,7 +1935,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "seasons",
         |t| &mut t.seasons,
-        Regex::case_insensitive(r"(?:complete\W|seasons?\W|\W|^)[\(\[]?(s\d{2,}-\d{2,}\b)[\)\]]?").unwrap(),
+        Regex::case_insensitive(r"(?:complete\W|seasons?\W|\W|^)[([]?(s\d{2,}-\d{2,}\b)[)\]]?").unwrap(),
         transforms::range_func,
         RegexHandlerOptions {
             remove: true,
@@ -1946,7 +1945,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "seasons",
         |t| &mut t.seasons,
-        Regex::case_insensitive(r"(?:complete\W|seasons?\W|\W|^)[\(\[]?(s[1-9]-[2-9])[\)\]]?").unwrap(),
+        Regex::case_insensitive(r"(?:complete\W|seasons?\W|\W|^)[([]?(s[1-9]-[2-9])[)\]]?").unwrap(),
         transforms::range_func,
         RegexHandlerOptions {
             remove: true,
@@ -1966,18 +1965,8 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "seasons",
         |t| &mut t.seasons,
-        Regex::case_insensitive(r"(?:(?:\bthe\W)?\bcomplete\W)?(?:seasons?|[Сс]езони?|temporadas?)[. ]?[-:]?[. ]?[\(\[]?((?:\d{1,2}[., /\\&]+)+\d{1,2}\b)[\)\]]?").unwrap(),
-        transforms::range_func,
-        RegexHandlerOptions {
-            remove: true,
-            ..Default::default()
-        },
-    ));
-    parser.add_handler(Handler::from_regex(
-        "seasons",
-        |t| &mut t.seasons,
         Regex::case_insensitive(
-            r"(?:(?:\bthe\W)?\bcomplete\W)?(?:seasons?|[Сс]езони?|temporadas?)[. ]?[-:]?[. ]?[\(\[]?((?:\d{1,2}[.-]+)+[1-9]\d?\b)[\)\]]?",
+            r"(?:(?:\bthe\W)?\bcomplete\W)?(?:seasons?|[Сс]езони?|temporadas?)[. ]?[-:]?[. ]?[([]?((?:\d{1,2}[., /\\&]+)+\d{1,2}\b)[)\]]?",
         )
         .unwrap(),
         transforms::range_func,
@@ -1989,7 +1978,20 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "seasons",
         |t| &mut t.seasons,
-        Regex::case_insensitive(r"(?:(?:\bthe\W)?\bcomplete\W)?season[. ]?[\(\[]?((?:\d{1,2}[. -]+)+[1-9]\d?\b)[\)\]]?(?!.*\.\w{2,4}$)")
+        Regex::case_insensitive(
+            r"(?:(?:\bthe\W)?\bcomplete\W)?(?:seasons?|[Сс]езони?|temporadas?)[. ]?[-:]?[. ]?[([]?((?:\d{1,2}[.-]+)+[1-9]\d?\b)[)\]]?",
+        )
+        .unwrap(),
+        transforms::range_func,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "seasons",
+        |t| &mut t.seasons,
+        Regex::case_insensitive(r"(?:(?:\bthe\W)?\bcomplete\W)?season[. ]?[([]?((?:\d{1,2}[. -]+)+[1-9]\d?\b)[)\]]?(?!.*\.\w{2,4}$)")
             .unwrap(),
         transforms::range_func,
         RegexHandlerOptions {
@@ -2091,7 +2093,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "seasons",
         |t| &mut t.seasons,
-        Regex::case_insensitive(r"[\[\(](\d{1,2})\.\d{1,3}[\)\]]").unwrap(),
+        Regex::case_insensitive(r"[[(](\d{1,2})\.\d{1,3}[)\]]").unwrap(),
         |v, _| Some(vec![v.parse().ok()?]),
         RegexHandlerOptions::default(),
     ));
@@ -2119,7 +2121,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "seasons",
         |t| &mut t.seasons,
-        Regex::case_insensitive(r"^(?!.*\bEp?(?:isode)? ?\d+\b.*\b\d{2}[ ._]\d{2}).*\b(\d{2})[ ._]\d{2}(?:\.F)?\.\w{2,4}$").unwrap(),
+        Regex::case_insensitive(r"(?<!\bEp?(?:isode)? ?\d+\b.*)\b(\d{2})[ ._]\d{2}(?:.F)?\.\w{2,4}$").unwrap(),
         |v, _| Some(vec![v.parse().ok()?]),
         RegexHandlerOptions::default(),
     ));
@@ -2238,7 +2240,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "episodes",
         |t| &mut t.episodes,
-        Regex::case_insensitive(r"[([]?(?:\D|^)(\d{1,3}[ .]?ao[ .]?\d{1,3})[\)\]]?(?:\W|$)").unwrap(),
+        Regex::case_insensitive(r"[([]?(?:\D|^)(\d{1,3}[ .]?ao[ .]?\d{1,3})[)\]]?(?:\W|$)").unwrap(),
         transforms::range_func,
         RegexHandlerOptions::default(),
     ));
@@ -2304,14 +2306,14 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "episodes",
         |t| &mut t.episodes,
-        Regex::case_insensitive(r"^\[.+].+[. ]+-[. ]+(\d{1,4})[. ]+(?=\W)").unwrap(),
+        Regex::case_insensitive(r"(?<=^\[.+].+)[. ]+-[. ]+(\d{1,4})[. ]+(?=\W)").unwrap(),
         |v, _| Some(vec![v.parse().ok()?]),
         RegexHandlerOptions::default(),
     ));
     parser.add_handler(Handler::from_regex(
         "episodes",
         |t| &mut t.episodes,
-        Regex::case_insensitive(r"(?:^|[ .\(\[-])(?!(?:seasons?|[Сс]езони?)\W)(\d{1,3}(?:[ .]?[,&+~][ .]?\d{1,3})+)(?:[ .\)\]-]|$)")
+        Regex::case_insensitive(r"(?<!(?:seasons?|[Сс]езони?)\W*)(?:[ .([-]|^)(\d{1,3}(?:[ .]?[,&+~][ .]?\d{1,3})+)(?:[ .)\]-]|$)")
             .unwrap(),
         transforms::range_func,
         RegexHandlerOptions::default(),
@@ -2319,7 +2321,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "episodes",
         |t| &mut t.episodes,
-        Regex::case_insensitive(r"(?:^|[ .\(\[-])(?!(?:seasons?|[Сс]езони?)\W)(\d{1,3}(?:-\d{1,3})+)(?:[ .\)\]]|-\D|$)").unwrap(),
+        Regex::case_insensitive(r"(?<!(?:seasons?|[Сс]езони?)\W*)(?:[ .([-]|^)(\d{1,3}(?:-\d{1,3})+)(?:[ .)(\]]|-\D|$)").unwrap(),
         transforms::range_func,
         RegexHandlerOptions::default(),
     ));
@@ -2347,7 +2349,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "episodes",
         |r| &mut r.episodes,
-        Regex::new(r"(?:\D|^)\d{1,2}[. ]?[xх][. ]?(\d{1,3})(?:[abc]|v0?[1-4]|\D|$)").unwrap(),
+        Regex::case_insensitive(r"(?:\D|^)\d{1,2}[. ]?[xх][. ]?(\d{1,3})(?:[abc]|v0?[1-4]|\D|$)").unwrap(),
         |v, _| Some(vec![v.parse().ok()?]),
         RegexHandlerOptions::default(),
     ));
@@ -2361,7 +2363,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "episodes",
         |t| &mut t.episodes,
-        Regex::new(r"[\[\(]\d{1,2}\.(\d{1,3})[\)\]]").unwrap(),
+        Regex::new(r"[[(]\d{1,2}\.(\d{1,3})[)\]]").unwrap(),
         |v, _| Some(vec![v.parse().ok()?]),
         RegexHandlerOptions::default(),
     ));
@@ -2420,7 +2422,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "episodes",
         |r| &mut r.episodes,
-        Regex::new(r"(?<!\bMovie\s-\s)(?<=\s-\s)\d+(?=\s[-(\s])").unwrap(),
+        Regex::case_insensitive(r"(?<!\bMovie\s-\s)(?<=\s-\s)\d+(?=\s[-(\s])").unwrap(),
         |v, _| Some(vec![v.parse().ok()?]),
         RegexHandlerOptions {
             remove: true,
@@ -2459,6 +2461,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
                 context.matched.get("quality").map(|m| m.match_index),
                 context.matched.get("codec").map(|m| m.match_index),
                 context.matched.get("audio").map(|m| m.match_index),
+                Some(context.title.len()), // (custom addition to prevent out of bounds)
             ]
             .into_iter()
             .flatten()
