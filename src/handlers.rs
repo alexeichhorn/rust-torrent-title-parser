@@ -4575,6 +4575,14 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler("group", regex.compile(r"\b(INFLATE|DEFLATE)\b"), value("$1"), {"remove": True})
     parser.add_handler("group", regex.compile(r"\b(?:Erai-raws|Erai-raws\.com)\b", regex.IGNORECASE), value("Erai-raws"), {"remove": True})
     parser.add_handler("group", regex.compile(r"^\[([^[\]]+)]"))
+
+    def handle_group_exclusion(context):
+        result = context["result"]
+        if "group" in result and result["group"] in ["-", ""]:
+            del result["group"]
+        return None
+
+    parser.add_handler("group", handle_group_exclusion)
      */
 
     // Group
@@ -4612,4 +4620,13 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         transforms::identity,
         RegexHandlerOptions::default(),
     ));
+
+    parser.add_handler(Handler::new("group", |context| {
+        if let Some(group) = &context.result.group {
+            if group == "-" || group == "" {
+                context.result.group = None; // remove this from groups
+            }
+        }
+        None
+    }));
 }
