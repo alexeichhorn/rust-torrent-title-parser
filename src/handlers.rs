@@ -837,7 +837,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::from_regex(
         "quality",
         |t| &mut t.quality,
-        Regex::case_insensitive(r"\b(?:HD[ .-]*)?T(?:ELE)?C(?:INE)?(?:Rip)?\b").unwrap(),
+        Regex::new(r"\b(?:HD[ .-]*)?T(?:ELE)?C(?:INE)?(?:Rip)?\b").unwrap(),
         transforms::value("TeleCine"),
         RegexHandlerOptions {
             remove: true,

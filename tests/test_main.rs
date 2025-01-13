@@ -13,7 +13,6 @@ fn test_main_parsing() {
                 quality: Some("BluRay".to_string()),
                 codec: Some("avc".to_string()),
                 group: Some("GAnGSteR".to_string()),
-                languages: vec![],
                 ..Default::default()
             },
         ),
@@ -349,6 +348,7 @@ fn test_main_parsing() {
                 resolution: Some("1080p".to_string()),
                 codec: Some("avc".to_string()),
                 group: Some("EDITH".to_string()),
+                scene: true,
                 ..Default::default()
             },
         ),
@@ -370,12 +370,13 @@ fn test_main_parsing() {
         (
             "The.Witcher.US.S01.INTERNAL.1080p.WEB.x264-STRiFE",
             ParsedTitle {
-                title: "The Witcher".to_string(),
+                title: "The Witcher US".to_string(),
                 seasons: vec![1],
                 quality: Some("WEB".to_string()),
                 resolution: Some("1080p".to_string()),
                 codec: Some("avc".to_string()),
                 group: Some("STRiFE".to_string()),
+                scene: true,
                 ..Default::default()
             },
         ),
@@ -391,6 +392,7 @@ fn test_main_parsing() {
                 audio: vec!["Dolby Digital Plus".to_string()],
                 channels: vec!["5.1".to_string()],
                 codec: Some("hevc".to_string()),
+                network: Some("Amazon".to_string()),
                 ..Default::default()
             },
         ),
@@ -443,6 +445,7 @@ fn test_main_parsing() {
                 languages: vec!["fr".to_string()],
                 container: Some("mkv".to_string()),
                 resolution: Some("1080p".to_string()),
+                scene: true,
                 quality: Some("WEB".to_string()),
                 codec: Some("avc".to_string()),
                 audio: vec!["AAC".to_string()],
@@ -508,8 +511,10 @@ fn test_main_parsing() {
                 hdr: vec!["SDR".to_string()],
                 codec: Some("hevc".to_string()),
                 site: Some("www.1TamilMV.pics".to_string()),
+                size: Some("3.2GB".to_string()),
                 container: Some("mkv".to_string()),
                 extension: Some("mkv".to_string()),
+                bitrate: Some("384kbps".to_string()),
                 audio: vec!["TrueHD".to_string(), "Dolby Digital Plus".to_string(), "AAC".to_string()],
                 channels: vec!["5.1".to_string()],
                 ..Default::default()
@@ -527,6 +532,7 @@ fn test_main_parsing() {
                 resolution: Some("1080p".to_string()),
                 container: Some("mkv".to_string()),
                 extension: Some("mkv".to_string()),
+                size: Some("2.3GB".to_string()),
                 site: Some("www.5MovieRulz.show".to_string()),
                 trash: true,
                 ..Default::default()
@@ -555,6 +561,7 @@ fn test_main_parsing() {
                 title: "Futurama".to_string(),
                 seasons: vec![8],
                 episodes: vec![3],
+                network: Some("Hulu".to_string()),
                 codec: Some("avc".to_string()),
                 container: Some("mkv".to_string()),
                 extension: Some("mkv".to_string()),
@@ -609,6 +616,7 @@ fn test_main_parsing() {
                 site: Some("www.MovCr.to".to_string()),
                 dubbed: true,
                 group: Some("MovCr".to_string()),
+                size: Some("950MB".to_string()),
                 ..Default::default()
             },
         ),
@@ -736,7 +744,7 @@ fn test_main_parsing() {
                 year: Some(2012),
                 resolution: Some("1080p".to_string()),
                 quality: Some("BluRay".to_string()),
-                site: Some("YTS.MX".to_string()),
+                is_3d: true,
                 ..Default::default()
             },
         ),
@@ -749,6 +757,8 @@ fn test_main_parsing() {
                 quality: Some("BluRay".to_string()),
                 codec: Some("avc".to_string()),
                 group: Some("SURCODE".to_string()),
+                scene: true,
+                is_3d: true,
                 ..Default::default()
             },
         ),
@@ -763,7 +773,6 @@ fn test_main_parsing() {
                 codec: Some("avc".to_string()),
                 group: Some("CAKES".to_string()),
                 scene: true,
-                languages: vec![],
                 ..Default::default()
             },
         ),
@@ -772,12 +781,11 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "The Office UK".to_string(),
                 seasons: vec![1],
-                episodes: vec![],
-                resolution: Some("1080p".to_string()),
                 quality: Some("BluRay REMUX".to_string()),
-                codec: Some("avc".to_string()),
+                resolution: Some("1080p".to_string()),
                 audio: vec!["Dolby Digital".to_string()],
                 channels: vec!["5.1".to_string()],
+                codec: Some("avc".to_string()),
                 group: Some("NOGRP".to_string()),
                 languages: vec![],
                 ..Default::default()
@@ -788,9 +796,8 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "The Office US".to_string(),
                 seasons: vec![1, 2, 3, 4, 5, 6, 7, 8, 9],
-                episodes: vec![],
-                resolution: Some("1080p".to_string()),
                 quality: Some("BluRay".to_string()),
+                resolution: Some("1080p".to_string()),
                 codec: Some("hevc".to_string()),
                 group: Some("HIQVE".to_string()),
                 complete: true,
@@ -798,7 +805,6 @@ fn test_main_parsing() {
                 ..Default::default()
             },
         ),
-
         (
             "Hard Knocks 2001 S23E01 1080p MAX WEB-DL DDP2 0 x264-NTb[EZTVx.to].mkv",
             ParsedTitle {
@@ -844,6 +850,7 @@ fn test_main_parsing() {
                 episodes: vec![1, 2, 3, 4, 5, 6, 7, 8],
                 resolution: Some("720p".to_string()),
                 quality: Some("WEB-DLRip".to_string()),
+                complete: true,
                 ..Default::default()
             },
         ),
@@ -885,7 +892,9 @@ fn test_main_parsing() {
                 container: Some("mkv".to_string()),
                 extension: Some("mkv".to_string()),
                 site: Some("www.1Tamilblasters.co".to_string()),
+                bitrate: Some("192kbps".to_string()),
                 edition: Some("IMAX".to_string()),
+                size: Some("8.3GB".to_string()),
                 ..Default::default()
             },
         ),
