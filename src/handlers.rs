@@ -4251,7 +4251,6 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
-
     parser.add_handler(Handler::from_regex(
         "3d",
         |r| &mut r.is_3d,
@@ -4263,7 +4262,6 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
-
     parser.add_handler(Handler::from_regex(
         "3d",
         |r| &mut r.is_3d,
@@ -4275,7 +4273,6 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
-
     parser.add_handler(Handler::from_regex(
         "3d",
         |r| &mut r.is_3d,
@@ -4287,7 +4284,6 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
-
     parser.add_handler(Handler::from_regex(
         "3d",
         |r| &mut r.is_3d,
@@ -4296,6 +4292,23 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         RegexHandlerOptions {
             remove: false,
             skip_if_first: true,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    # Size
+    parser.add_handler("size", regex.compile(r"\b(\d+(\.\d+)?\s?(MB|GB|TB))\b", regex.IGNORECASE), none, {"remove": True})
+     */
+
+    // Size
+    parser.add_handler(Handler::from_regex(
+        "size",
+        |r| &mut r.size,
+        Regex::case_insensitive(r"\b(\d+(\.\d+)?\s?(MB|GB|TB))\b").unwrap(),
+        transforms::identity,
+        RegexHandlerOptions {
+            remove: true,
             ..Default::default()
         },
     ));
