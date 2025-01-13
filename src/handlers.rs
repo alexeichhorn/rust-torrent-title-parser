@@ -1,3 +1,5 @@
+use std::cmp::min;
+
 use regex::Regex as LiteRegex;
 use regress::Regex;
 
@@ -2470,6 +2472,9 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             let start_index = start_indexes.iter().min().copied().unwrap_or(0);
             let end_index = end_indexes.iter().min().copied().unwrap_or(context.title.len());
 
+            // If start_index > end_index, set start_index = end_index
+            let start_index = min(start_index, end_index);
+
             let beginning_title = &context.title[..end_index];
             let middle_title = &context.title[start_index..end_index];
 
@@ -4532,5 +4537,79 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             remove: true,
             ..Default::default()
         },
+    ));
+
+    /*
+    # Extension
+    parser.add_handler("extension", regex.compile(r"\.(3g2|3gp|avi|flv|mkv|mk3d|mov|mp2|mp4|m4v|mpe|mpeg|mpg|mpv|webm|wmv|ogm|divx|ts|m2ts|iso|vob|sub|idx|ttxt|txt|smi|srt|ssa|ass|vtt|nfo|html)$", regex.IGNORECASE), lowercase)
+    parser.add_handler("audio", regex.compile(r"\bMP3\b", regex.IGNORECASE), uniq_concat(value("MP3")), {"remove": True, "skipIfAlreadyFound": False})
+     */
+
+    // Extension
+    parser.add_handler(Handler::from_regex(
+        "extension",
+        |r| &mut r.extension,
+        Regex::case_insensitive(r"\.(3g2|3gp|avi|flv|mkv|mk3d|mov|mp2|mp4|m4v|mpe|mpeg|mpg|mpv|webm|wmv|ogm|divx|ts|m2ts|iso|vob|sub|idx|ttxt|txt|smi|srt|ssa|ass|vtt|nfo|html)$").unwrap(),
+        transforms::lowercase,
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "audio",
+        |r| &mut r.audio,
+        Regex::case_insensitive(r"\bMP3\b").unwrap(),
+        transforms::chain_transforms(transforms::replace_value("MP3"), transforms::uniq_concat),
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    # Group
+    parser.add_handler("group", regex.compile(r"\(([\w-]+)\)(?:$|\.\w{2,4}$)"))
+    parser.add_handler("group", regex.compile(r"\b(INFLATE|DEFLATE)\b"), value("$1"), {"remove": True})
+    parser.add_handler("group", regex.compile(r"\b(?:Erai-raws|Erai-raws\.com)\b", regex.IGNORECASE), value("Erai-raws"), {"remove": True})
+    parser.add_handler("group", regex.compile(r"^\[([^[\]]+)]"))
+     */
+
+    // Group
+    parser.add_handler(Handler::from_regex(
+        "group",
+        |r| &mut r.group,
+        Regex::new(r"\(([\w-]+)\)(?:$|\.\w{2,4}$)").unwrap(),
+        transforms::identity,
+        RegexHandlerOptions::default(),
+    ));
+    parser.add_handler(Handler::from_regex(
+        "group",
+        |r| &mut r.group,
+        Regex::new(r"\b(INFLATE|DEFLATE)\b").unwrap(),
+        transforms::value("$1"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "group",
+        |r| &mut r.group,
+        Regex::case_insensitive(r"\b(?:Erai-raws|Erai-raws\.com)\b").unwrap(),
+        transforms::value("Erai-raws"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "group",
+        |r| &mut r.group,
+        Regex::new(r"^\[([^[\]]+)]").unwrap(),
+        transforms::identity,
+        RegexHandlerOptions::default(),
     ));
 }
