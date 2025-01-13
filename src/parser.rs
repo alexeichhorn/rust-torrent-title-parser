@@ -1,3 +1,4 @@
+use crate::extensions::regex::RegexStringExt as _;
 use crate::handler_wrapper::Handler;
 use crate::handler_wrapper::HandlerContext;
 use crate::handler_wrapper::Match;
@@ -6,7 +7,7 @@ use crate::ParsedTitle;
 use crate::ParserError;
 use lazy_static::lazy_static;
 
-use regex::Regex;
+use regress::Regex;
 use std::collections::HashMap;
 use std::sync::OnceLock;
 
@@ -32,26 +33,26 @@ const NON_ENGLISH_CHARS: &str = concat!(
 
 lazy_static! {
     static ref CLEAN_TITLE_REGEX: Regex = Regex::new(r"_+").unwrap();
-    static ref MOVIE_REGEX: Regex = Regex::new(r"[\[\(]movie[\)\]]").unwrap();
-    static ref RUSSIAN_CAST_REGEX: Regex = Regex::new(&format!(r"\([^)]*[\u{{0400}}-\u{{04ff}}][^)]*\)$|/[^/]*\([^)]*\)$")).unwrap();
+    static ref MOVIE_REGEX: Regex = Regex::case_insensitive(r"[[(]movie[)\]]").unwrap();
+    static ref RUSSIAN_CAST_REGEX: Regex = Regex::new(&format!(r"\([^)]*[\u0400-\u04ff][^)]*\)$|(?<=\/.*)\(.*\)$")).unwrap();
     static ref ALT_TITLES_REGEX: Regex = Regex::new(&format!(
-        r"[^/|(()]*[{}][^/|]*[/|]|[/|][^/|(()]*[{}][^/|]*",
+        r"[^/|(]*[{}][^/|]*[/|]|[/|][^/|(]*[{}][^/|]*",
         NON_ENGLISH_CHARS, NON_ENGLISH_CHARS
     ))
     .unwrap();
     static ref NOT_ONLY_NON_ENGLISH_REGEX: Regex = Regex::new(&format!(
-        r"[a-zA-Z][^{}]+[{}].*[{}]|[{}].*[{}][^{}]+[a-zA-Z]",
+        r"(?<=[a-zA-Z][^{}]+)[{}].*[{}]|[{}].*[{}](?=[^{}]+[a-zA-Z])",
         NON_ENGLISH_CHARS, NON_ENGLISH_CHARS, NON_ENGLISH_CHARS, NON_ENGLISH_CHARS, NON_ENGLISH_CHARS, NON_ENGLISH_CHARS
     ))
     .unwrap();
     static ref NOT_ALLOWED_SYMBOLS_AT_START_AND_END: Regex =
-        Regex::new(&format!(r"^[^\w{}#\[【★]+|[ \-:/\\\[\|{{(#$&^]+$", NON_ENGLISH_CHARS)).unwrap();
+        Regex::new(&format!(r"^[^\w{}#[【★]+|[ \-:/\\[|{{(#$&^]+$", NON_ENGLISH_CHARS)).unwrap();
     static ref REMAINING_NOT_ALLOWED_SYMBOLS_AT_START_AND_END: Regex = Regex::new(&format!(r"^[^\w{}#]+|]$", NON_ENGLISH_CHARS)).unwrap();
     static ref REDUNDANT_SYMBOLS_AT_END: Regex = Regex::new(r"[ \-:./\\]+$").unwrap();
     static ref EMPTY_BRACKETS_REGEX: Regex = Regex::new(r"\(\s*\)|\[\s*\]|\{\s*\}").unwrap();
     static ref PARANTHESES_WITHOUT_CONTENT: Regex = Regex::new(r"\(\W*\)|\[\W*\]|\{\W*\}").unwrap();
-    static ref STAR_REGEX_1: Regex = Regex::new(r"^[\[【★].*[\]】★][ \.]?(.+)").unwrap();
-    static ref STAR_REGEX_2: Regex = Regex::new(r"(.+)[ \.]?[\[【★].*[\]】★]$").unwrap();
+    static ref STAR_REGEX_1: Regex = Regex::new(r"^[[【★].*[\]】★][ .]?(.+)").unwrap();
+    static ref STAR_REGEX_2: Regex = Regex::new(r"(.+)[ .]?[[【★].*[\]】★]$").unwrap();
     static ref MP3_REGEX: Regex = Regex::new(r"\bmp3$").unwrap();
     static ref SPACING_REGEX: Regex = Regex::new(r"\s+").unwrap();
     static ref DOT_REGEX: Regex = Regex::new(r"\.").unwrap();

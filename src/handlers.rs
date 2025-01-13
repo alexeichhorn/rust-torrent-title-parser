@@ -4551,11 +4551,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         |r| &mut r.extension,
         Regex::case_insensitive(r"\.(3g2|3gp|avi|flv|mkv|mk3d|mov|mp2|mp4|m4v|mpe|mpeg|mpg|mpv|webm|wmv|ogm|divx|ts|m2ts|iso|vob|sub|idx|ttxt|txt|smi|srt|ssa|ass|vtt|nfo|html)$").unwrap(),
         transforms::lowercase,
-        RegexHandlerOptions {
-            remove: true,
-            skip_if_already_found: false,
-            ..Default::default()
-        },
+        RegexHandlerOptions::default(),
     ));
     parser.add_handler(Handler::from_regex(
         "audio",

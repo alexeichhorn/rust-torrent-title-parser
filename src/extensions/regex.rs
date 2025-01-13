@@ -9,6 +9,8 @@ where
     fn find_str<'s>(&self, subject: &'s str) -> Option<StringMatch<'s>>;
     fn find_iter_str<'r, 's>(&'r self, subject: &'s str) -> StringMatches<'s, 'r, 's>;
     fn contains_match(&self, subject: &str) -> bool;
+
+    fn replace_all(&self, subject: &str, replacement: &str) -> String;
 }
 
 impl RegexStringExt for Regex {
@@ -38,6 +40,23 @@ impl RegexStringExt for Regex {
 
     fn contains_match(&self, subject: &str) -> bool {
         self.find(subject).is_some()
+    }
+
+    fn replace_all(&self, subject: &str, replacement: &str) -> String {
+        let mut result = String::with_capacity(subject.len());
+        let mut last_match_end = 0;
+
+        for m in self.find_iter(subject) {
+            // Copy the segment between the last match and this match
+            result.push_str(&subject[last_match_end..m.start()]);
+            // Add the replacement text
+            result.push_str(replacement);
+            last_match_end = m.end();
+        }
+
+        // Copy any remaining text after the last match
+        result.push_str(&subject[last_match_end..]);
+        result
     }
 }
 
