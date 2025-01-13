@@ -1740,6 +1740,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     parser.add_handler(Handler::new("volumes", |context| {
         let title = &context.title;
         let start_index = context.matched.get("year").map(|y| y.match_index).unwrap_or(0);
+        let start_index = min(start_index, title.len() - 1); // make sure we don't go out of bounds
 
         if let Some(m) = VOLUME_REGEX.find_str(&title[start_index..]) {
             let vol = m.group(1).unwrap().as_str().parse::<i32>().unwrap();
@@ -4629,4 +4630,20 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         }
         None
     }));
+
+    /*
+    parser.add_handler("trash", regex.compile(r"acesse o original", regex.IGNORECASE), boolean, {"remove": True})
+     */
+
+    // Trash (again)
+    parser.add_handler(Handler::from_regex(
+        "trash",
+        |r| &mut r.trash,
+        Regex::case_insensitive(r"acesse o original").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
 }
