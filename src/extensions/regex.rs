@@ -11,6 +11,7 @@ where
     fn contains_match(&self, subject: &str) -> bool;
 
     fn replace_all(&self, subject: &str, replacement: &str) -> String;
+    fn replace_all_with_captures(&self, subject: &str, replacement: &str, use_captures: bool) -> String;
 }
 
 impl RegexStringExt for Regex {
@@ -43,14 +44,37 @@ impl RegexStringExt for Regex {
     }
 
     fn replace_all(&self, subject: &str, replacement: &str) -> String {
+        self.replace_all_with_captures(subject, replacement, false)
+    }
+
+    fn replace_all_with_captures(&self, subject: &str, replacement: &str, use_captures: bool) -> String {
         let mut result = String::with_capacity(subject.len());
         let mut last_match_end = 0;
 
         for m in self.find_iter(subject) {
             // Copy the segment between the last match and this match
             result.push_str(&subject[last_match_end..m.start()]);
-            // Add the replacement text
-            result.push_str(replacement);
+
+            if use_captures {
+                // Handle capture group references like \1, \2, etc.
+                let mut chars = replacement.chars().peekable();
+                while let Some(c) = chars.next() {
+                    if c == '\\' {
+                        if let Some(group_num) = chars.next().and_then(|d| d.to_digit(10)) {
+                            if let Some(group) = m.captures.get(group_num as usize - 1).and_then(|r| r.as_ref()) {
+                                result.push_str(&subject[group.clone()]);
+                            }
+                        } else {
+                            result.push('\\');
+                        }
+                    } else {
+                        result.push(c);
+                    }
+                }
+            } else {
+                result.push_str(replacement);
+            }
+
             last_match_end = m.end();
         }
 

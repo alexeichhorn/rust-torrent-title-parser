@@ -87,8 +87,8 @@ impl Parser {
         cleaned = MOVIE_REGEX.replace_all(&cleaned, "").to_string();
         cleaned = NOT_ALLOWED_SYMBOLS_AT_START_AND_END.replace_all(&cleaned, "").to_string();
         cleaned = RUSSIAN_CAST_REGEX.replace_all(&cleaned, "").to_string();
-        cleaned = STAR_REGEX_1.replace_all(&cleaned, r"\1").to_string();
-        cleaned = STAR_REGEX_2.replace_all(&cleaned, r"\1").to_string();
+        cleaned = STAR_REGEX_1.replace_all_with_captures(&cleaned, r"\1", true);
+        cleaned = STAR_REGEX_2.replace_all_with_captures(&cleaned, r"\1", true);
         cleaned = ALT_TITLES_REGEX.replace_all(&cleaned, "").to_string();
         cleaned = NOT_ONLY_NON_ENGLISH_REGEX.replace_all(&cleaned, "").to_string();
         cleaned = REMAINING_NOT_ALLOWED_SYMBOLS_AT_START_AND_END.replace_all(&cleaned, "").to_string();
