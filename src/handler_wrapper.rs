@@ -175,6 +175,12 @@ impl<T> PropertyIsSet for Vec<T> {
     }
 }
 
+impl PropertyIsSet for String {
+    fn is_set(&self) -> bool {
+        !self.is_empty()
+    }
+}
+
 // endregion
 // region: TrimIfString
 

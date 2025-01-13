@@ -1,7 +1,6 @@
-use std::cmp::min;
-
 use regex::Regex as LiteRegex;
 use regress::Regex;
+use std::cmp::min;
 
 use crate::extensions::regex::RegexStringExt;
 use crate::handler_wrapper::{Handler, HandlerResult, Match, RegexHandlerOptions};
@@ -4641,6 +4640,34 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         |r| &mut r.trash,
         Regex::case_insensitive(r"acesse o original").unwrap(),
         transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    # Title (hardcoded cleanup)
+    parser.add_handler("title", regex.compile(r"\b100[ .-]*years?[ .-]*quest\b", regex.IGNORECASE), none, {"remove": True})  # episode title
+    parser.add_handler("title", regex.compile(r"\b(?:INTEGRALE?|INTÉGRALE?|INTERNAL|HFR)\b", regex.IGNORECASE), none, {"remove": True})
+     */
+
+    // Title (hardcoded cleanup)
+    parser.add_handler(Handler::from_regex(
+        "title",
+        |r| &mut r.title,
+        Regex::case_insensitive(r"\b100[ .-]*years?[ .-]*quest\b").unwrap(),
+        transforms::identity_non_optional,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "title",
+        |r| &mut r.title,
+        Regex::case_insensitive(r"\b(?:INTEGRALE?|INTÉGRALE?|INTERNAL|HFR)\b").unwrap(),
+        transforms::identity_non_optional,
         RegexHandlerOptions {
             remove: true,
             ..Default::default()

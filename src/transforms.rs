@@ -12,6 +12,10 @@ pub fn identity<'a>(value: &'a str, _: &Option<String>) -> Option<Option<String>
     Some(Some(value.to_string()))
 }
 
+pub fn identity_non_optional(value: &str, _: &String) -> Option<String> {
+    Some(value.to_string())
+}
+
 pub fn uppercase(value: &str, _: &Option<String>) -> Option<Option<String>> {
     Some(Some(value.to_uppercase()))
 }
