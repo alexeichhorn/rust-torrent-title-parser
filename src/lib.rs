@@ -54,6 +54,7 @@ pub struct ParsedTitle {
     pub subbed: bool,
     pub documentary: bool,
     pub upscaled: bool,
+    pub is_3d: bool,
     pub extras: Vec<String>,
     pub size: Option<String>,
     pub network: Option<String>,

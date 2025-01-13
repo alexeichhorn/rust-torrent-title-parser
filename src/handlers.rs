@@ -4194,4 +4194,109 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
+
+    /*
+    def handle_group(context):
+        result = context["result"]
+        matched = context["matched"]
+        if "group" in matched and matched["group"].get("raw_match", "").startswith("[") and matched["group"]["raw_match"].endswith("]"):
+            end_index = matched["group"]["match_index"] + len(matched["group"]["raw_match"]) if "group" in matched else 0
+
+            # Check if there's any overlap with other matched elements
+            if any(key != "group" and matched[key]["match_index"] < end_index for key in matched if "match_index" in matched[key]) and "group" in result:
+                del result["group"]
+        return None
+
+    parser.add_handler("group", handle_group)
+     */
+
+    // Group (again)
+    parser.add_handler(Handler::new("group", |context| {
+        let Some(group_matched) = context.matched.get("group") else {
+            return None;
+        };
+        if group_matched.raw_match.starts_with('[') && group_matched.raw_match.ends_with(']') {
+            let end_index = group_matched.match_index + group_matched.raw_match.len();
+
+            // Check if there's any overlap with other matched elements
+            if context
+                .matched
+                .iter()
+                .any(|(key, value)| key != "group" && value.match_index < end_index)
+            {
+                context.result.group = None; // remove group again
+            }
+        }
+        None
+    }));
+
+    /*
+    # 3D
+    parser.add_handler("3d", regex.compile(r"(?<=\b[12]\d{3}\b).*\b(3d|sbs|half[ .-]ou|half[ .-]sbs)\b", regex.IGNORECASE), boolean, {"remove": False, "skipIfFirst": True})
+    parser.add_handler("3d", regex.compile(r"\b((Half.)?SBS|HSBS)\b", regex.IGNORECASE), boolean, {"remove": False, "skipIfFirst": True})
+    parser.add_handler("3d", regex.compile(r"\bBluRay3D\b", regex.IGNORECASE), boolean, {"remove": False, "skipIfFirst": True})
+    parser.add_handler("3d", regex.compile(r"\bBD3D\b", regex.IGNORECASE), boolean, {"remove": False, "skipIfFirst": True})
+    parser.add_handler("3d", regex.compile(r"\b3D\b", regex.IGNORECASE), boolean, {"remove": False, "skipIfFirst": True})
+     */
+
+    // 3D
+    parser.add_handler(Handler::from_regex(
+        "3d",
+        |r| &mut r.is_3d,
+        Regex::case_insensitive(r"(?<=\b[12]\d{3}\b).*\b(3d|sbs|half[ .-]ou|half[ .-]sbs)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            skip_if_first: true,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "3d",
+        |r| &mut r.is_3d,
+        Regex::case_insensitive(r"\b((Half.)?SBS|HSBS)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            skip_if_first: true,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "3d",
+        |r| &mut r.is_3d,
+        Regex::case_insensitive(r"\bBluRay3D\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            skip_if_first: true,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "3d",
+        |r| &mut r.is_3d,
+        Regex::case_insensitive(r"\bBD3D\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            skip_if_first: true,
+            ..Default::default()
+        },
+    ));
+
+    parser.add_handler(Handler::from_regex(
+        "3d",
+        |r| &mut r.is_3d,
+        Regex::case_insensitive(r"\b3D\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: false,
+            skip_if_first: true,
+            ..Default::default()
+        },
+    ));
 }
