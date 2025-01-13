@@ -4069,4 +4069,129 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         }
         None
     }));
+
+    /*
+    # Subbed
+    parser.add_handler("subbed", regex.compile(r"\b(?:Official.*?|Dual-?)?sub(s|bed)?\b", regex.IGNORECASE), boolean, {"remove": True})
+    parser.add_handler("subbed", regex.compile(r"\bmulti(?:ple)?[ .-]*(?:su?$|sub\w*|dub\w*)\b|msub", regex.IGNORECASE), boolean, {"skipIfAlreadyFound": False, "remove": True})
+     */
+
+    // Subbed
+    parser.add_handler(Handler::from_regex(
+        "subbed",
+        |r| &mut r.subbed,
+        Regex::case_insensitive(r"\b(?:Official.*?|Dual-?)?sub(s|bed)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "subbed",
+        |r| &mut r.subbed,
+        Regex::case_insensitive(r"\bmulti(?:ple)?[ .-]*(?:su?$|sub\w*|dub\w*)\b|msub").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            remove: true,
+            ..Default::default()
+        },
+    ));
+
+    /*
+    # Dubbed
+    parser.add_handler("dubbed", regex.compile(r"\bmulti(?:ple)?[ .-]*(?:lang(?:uages?)?|audio|VF2)?\b", regex.IGNORECASE), boolean, {"remove": True, "skipIfAlreadyFound": False})
+    parser.add_handler("dubbed", regex.compile(r"\btri(?:ple)?[ .-]*(?:audio|dub\w*)\b", regex.IGNORECASE), boolean, {"skipIfAlreadyFound": False})
+    parser.add_handler("dubbed", regex.compile(r"\bdual[ .-]*(?:au?$|[aá]udio|line)\b", regex.IGNORECASE), boolean, {"skipIfAlreadyFound": False})
+    parser.add_handler("dubbed", regex.compile(r"\bdual\b(?![ .-]*sub)", regex.IGNORECASE), boolean, {"skipIfAlreadyFound": False})
+    parser.add_handler("dubbed", regex.compile(r"\b(fan\s?dub)\b", regex.IGNORECASE), boolean, {"remove": True, "skipFromTitle": True})
+    parser.add_handler("dubbed", regex.compile(r"\b(Fan.*)?(?:DUBBED|dublado|dubbing|DUBS?)\b", regex.IGNORECASE), boolean, {"remove": True})
+    parser.add_handler("dubbed", regex.compile(r"\b(?!.*\bsub(s|bed)?\b)([ _\-\[(\.])?(dual|multi)([ _\-\[(\.])?(audio)?\b", regex.IGNORECASE), boolean, {"remove": True})
+    parser.add_handler("dubbed", regex.compile(r"\b(JAP?(anese)?|ZH)\+ENG?(lish)?|ENG?(lish)?\+(JAP?(anese)?|ZH)\b", regex.IGNORECASE), boolean, {"remove": True})
+     */
+
+    // Dubbed
+    parser.add_handler(Handler::from_regex(
+        "dubbed",
+        |r| &mut r.dubbed,
+        Regex::case_insensitive(r"\bmulti(?:ple)?[ .-]*(?:lang(?:uages?)?|audio|VF2)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "dubbed",
+        |r| &mut r.dubbed,
+        Regex::case_insensitive(r"\btri(?:ple)?[ .-]*(?:audio|dub\w*)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "dubbed",
+        |r| &mut r.dubbed,
+        Regex::case_insensitive(r"\bdual[ .-]*(?:au?$|[aá]udio|line)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "dubbed",
+        |r| &mut r.dubbed,
+        Regex::case_insensitive(r"\bdual\b(?![ .-]*sub)").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            skip_if_already_found: false,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "dubbed",
+        |r| &mut r.dubbed,
+        Regex::case_insensitive(r"\b(fan\s?dub)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            skip_from_title: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "dubbed",
+        |r| &mut r.dubbed,
+        Regex::case_insensitive(r"\b(Fan.*)?(?:DUBBED|dublado|dubbing|DUBS?)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "dubbed",
+        |r| &mut r.dubbed,
+        Regex::case_insensitive(r"\b(?!.*\bsub(s|bed)?\b)([ _\-\[(\.])?(dual|multi)([ _\-\[(\.])?(audio)?\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "dubbed",
+        |r| &mut r.dubbed,
+        Regex::case_insensitive(r"\b(JAP?(anese)?|ZH)\+ENG?(lish)?|ENG?(lish)?\+(JAP?(anese)?|ZH)\b").unwrap(),
+        transforms::true_if_found,
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
 }
