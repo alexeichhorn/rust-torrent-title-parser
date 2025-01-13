@@ -4312,4 +4312,32 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
+
+    /*
+    # Site
+    parser.add_handler("site", regex.compile(r"\[([^\]]+\.[^\]]+)\](?=\.\w{2,4}$|\s)", regex.IGNORECASE), value("$1"), {"remove": True})
+    parser.add_handler("site", regex.compile(r"\bwww\.\w*\.\w+\b", regex.IGNORECASE), value("$1"), {"remove": True})
+     */
+
+    // Site
+    parser.add_handler(Handler::from_regex(
+        "site",
+        |r| &mut r.site,
+        Regex::case_insensitive(r"\[([^\]]+\.[^\]]+)\](?=\.\w{2,4}$|\s)").unwrap(),
+        transforms::value("$1"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "site",
+        |r| &mut r.site,
+        Regex::case_insensitive(r"\bwww\.\w*\.\w+\b").unwrap(),
+        transforms::value("$1"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
 }

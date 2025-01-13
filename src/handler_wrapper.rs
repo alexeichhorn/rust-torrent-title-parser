@@ -67,7 +67,7 @@ impl Handler {
         Handler::new_old(name.to_string(), Box::new(handler))
     }
 
-    pub fn from_regex<T: PropertyIsSet>(
+    pub fn from_regex<T: PropertyIsSet + TrimIfString>(
         name: &'static str,
         accessor: impl Fn(&mut ParsedTitle) -> &mut T + Send + Sync + 'static,
         regex: Regex,
@@ -87,6 +87,9 @@ impl Handler {
                 let Some(transformed) = transform(clean_match, field) else {
                     return None;
                 };
+
+                // If transformed is a string, strip whitespace
+                let transformed = transformed.trim_if_string();
 
                 let before_title_match = BEFORE_TITLE_MATCH_REGEX.find_str(context.title);
                 let is_before_title = if let Some(before_title_match) = before_title_match {
@@ -148,7 +151,7 @@ pub fn add_handler<F>(&mut self, handler: F)
         self.handlers.push(Box::new(handler));
     } */
 
-// region:
+// region: PropertyIsSet
 
 pub trait PropertyIsSet {
     fn is_set(&self) -> bool;
@@ -171,3 +174,48 @@ impl<T> PropertyIsSet for Vec<T> {
         !self.is_empty()
     }
 }
+
+// endregion
+// region: TrimIfString
+
+pub trait TrimIfString {
+    fn trim_if_string(self) -> Self;
+}
+
+impl TrimIfString for String {
+    fn trim_if_string(self) -> String {
+        self.trim().to_string()
+    }
+}
+
+impl<'a> TrimIfString for &'a str {
+    fn trim_if_string(self) -> &'a str {
+        self.trim()
+    }
+}
+
+impl TrimIfString for bool {
+    fn trim_if_string(self) -> bool {
+        self
+    }
+}
+
+impl TrimIfString for i32 {
+    fn trim_if_string(self) -> i32 {
+        self
+    }
+}
+
+impl<T> TrimIfString for Vec<T> {
+    fn trim_if_string(self) -> Vec<T> {
+        self
+    }
+}
+
+impl<T: TrimIfString> TrimIfString for Option<T> {
+    fn trim_if_string(self) -> Option<T> {
+        self.map(|s| s.trim_if_string())
+    }
+}
+
+// endregion
