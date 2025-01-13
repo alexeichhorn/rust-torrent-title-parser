@@ -4340,4 +4340,197 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
             ..Default::default()
         },
     ));
+
+    /*
+    # Networks
+    parser.add_handler("network", regex.compile(r"\bATVP?\b", regex.IGNORECASE), value("Apple TV"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bAMZN\b", regex.IGNORECASE), value("Amazon"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bNF|Netflix\b", regex.IGNORECASE), value("Netflix"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bNICK(elodeon)?\b", regex.IGNORECASE), value("Nickelodeon"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bDSNY?P?\b", regex.IGNORECASE), value("Disney"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bH(MAX|BO)\b", regex.IGNORECASE), value("HBO"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bHULU\b", regex.IGNORECASE), value("Hulu"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bCBS\b", regex.IGNORECASE), value("CBS"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bNBC\b", regex.IGNORECASE), value("NBC"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bAMC\b", regex.IGNORECASE), value("AMC"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bPBS\b", regex.IGNORECASE), value("PBS"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\b(Crunchyroll|[. -]CR[. -])\b", regex.IGNORECASE), value("Crunchyroll"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bVICE\b", regex.IGNORECASE), value("VICE"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bSony\b", regex.IGNORECASE), value("Sony"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bHallmark\b", regex.IGNORECASE), value("Hallmark"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bAdult.?Swim\b", regex.IGNORECASE), value("Adult Swim"), {"remove": True})
+    parser.add_handler("network", regex.compile(r"\bAnimal.?Planet|ANPL\b", regex.IGNORECASE), value("Animal Planet"), {"remove": True})
+     */
+
+    // Networks
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bATVP?\b").unwrap(),
+        transforms::value("Apple TV"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bAMZN\b").unwrap(),
+        transforms::value("Amazon"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bNF|Netflix\b").unwrap(),
+        transforms::value("Netflix"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bNICK(elodeon)?\b").unwrap(),
+        transforms::value("Nickelodeon"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bDSNY?P?\b").unwrap(),
+        transforms::value("Disney"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bH(MAX|BO)\b").unwrap(),
+        transforms::value("HBO"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bHULU\b").unwrap(),
+        transforms::value("Hulu"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bCBS\b").unwrap(),
+        transforms::value("CBS"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bNBC\b").unwrap(),
+        transforms::value("NBC"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bAMC\b").unwrap(),
+        transforms::value("AMC"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bPBS\b").unwrap(),
+        transforms::value("PBS"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\b(Crunchyroll|[. -]CR[. -])\b").unwrap(),
+        transforms::value("Crunchyroll"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bVICE\b").unwrap(),
+        transforms::value("VICE"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bSony\b").unwrap(),
+        transforms::value("Sony"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bHallmark\b").unwrap(),
+        transforms::value("Hallmark"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bAdult.?Swim\b").unwrap(),
+        transforms::value("Adult Swim"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
+    parser.add_handler(Handler::from_regex(
+        "network",
+        |r| &mut r.network,
+        Regex::case_insensitive(r"\bAnimal.?Planet|ANPL\b").unwrap(),
+        transforms::value("Animal Planet"),
+        RegexHandlerOptions {
+            remove: true,
+            ..Default::default()
+        },
+    ));
 }
