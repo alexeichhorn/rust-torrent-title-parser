@@ -8,7 +8,7 @@ mod transforms;
 mod types;
 
 pub use parser::Parser;
-pub use types::{Codec, Language};
+pub use types::{Codec, Language, Quality};
 
 #[derive(Debug, Error)]
 pub enum ParserError {
@@ -35,7 +35,7 @@ pub struct ParsedTitle {
     pub remastered: bool,
     pub unrated: bool,
     pub region: Option<String>,
-    pub quality: Option<String>,
+    pub quality: Option<Quality>,
     pub bitrate: Option<String>,
     pub bit_depth: Option<String>,
     pub hdr: Vec<String>,

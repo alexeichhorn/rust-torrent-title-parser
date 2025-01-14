@@ -1,4 +1,4 @@
-use torrent_title_parser::{parse_title, Codec, ParsedTitle};
+use torrent_title_parser::{parse_title, Codec, ParsedTitle, Quality};
 
 #[test]
 fn test_random_sports_parse() {
@@ -7,7 +7,7 @@ fn test_random_sports_parse() {
             "UFC.239.PPV.Jones.Vs.Santos.HDTV.x264-PUNCH[TGx]",
             ParsedTitle {
                 title: "UFC 239 Jones Vs Santos".to_string(),
-                quality: Some("HDTV".to_string()),
+                quality: Some(Quality::HDTV),
                 codec: Some(Codec::Avc),
                 group: Some("PUNCH".to_string()),
                 ppv: true,
@@ -18,7 +18,7 @@ fn test_random_sports_parse() {
             "UFC.Fight.Night.158.Cowboy.vs.Gaethje.WEB.x264-PUNCH[TGx]",
             ParsedTitle {
                 title: "UFC Fight Night 158 Cowboy vs Gaethje".to_string(),
-                quality: Some("WEB".to_string()),
+                quality: Some(Quality::Web),
                 codec: Some(Codec::Avc),
                 group: Some("PUNCH".to_string()),
                 ppv: true,
@@ -29,7 +29,7 @@ fn test_random_sports_parse() {
             "UFC 226 PPV Miocic vs Cormier HDTV x264-Ebi [TJET]",
             ParsedTitle {
                 title: "UFC 226 Miocic vs Cormier".to_string(),
-                quality: Some("HDTV".to_string()),
+                quality: Some(Quality::HDTV),
                 codec: Some(Codec::Avc),
                 ppv: true,
                 ..Default::default()

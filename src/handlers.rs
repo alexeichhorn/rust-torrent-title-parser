@@ -1,10 +1,9 @@
-use regex::Regex as LiteRegex;
 use regress::Regex;
 use std::cmp::min;
 
 use crate::extensions::regex::RegexStringExt;
 use crate::handler_wrapper::{Handler, HandlerResult, Match, RegexHandlerOptions};
-use crate::{transforms, Codec, Language};
+use crate::{transforms, Codec, Language, Quality};
 use lazy_static::lazy_static;
 
 pub fn add_default_handlers(parser: &mut super::Parser) {
@@ -828,7 +827,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\b(?:HD[ .-]*)?T(?:ELE)?S(?:YNC)?(?:Rip)?\b").unwrap(),
-        transforms::value("TeleSync"),
+        transforms::const_value(Quality::TeleSync),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -838,7 +837,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::new(r"\b(?:HD[ .-]*)?T(?:ELE)?C(?:INE)?(?:Rip)?\b").unwrap(),
-        transforms::value("TeleCine"),
+        transforms::const_value(Quality::TeleCine),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -848,7 +847,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\b(?:DVD?|BD|BR)?[ .-]*Scr(?:eener)?\b").unwrap(),
-        transforms::value("SCR"),
+        transforms::const_value(Quality::SCR),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -858,7 +857,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bP(?:RE)?-?(HD|DVD)(?:Rip)?\b").unwrap(),
-        transforms::value("SCR"),
+        transforms::const_value(Quality::SCR),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -868,7 +867,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bBlu[ .-]*Ray\b(?=.*remux)").unwrap(),
-        transforms::value("BluRay REMUX"),
+        transforms::const_value(Quality::BluRayRemux),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -878,7 +877,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"(?:BD|BR|UHD)[- ]?remux").unwrap(),
-        transforms::value("BluRay REMUX"),
+        transforms::const_value(Quality::BluRayRemux),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -888,7 +887,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"(?<=remux.*)\bBlu[ .-]*Ray\b").unwrap(),
-        transforms::value("BluRay REMUX"),
+        transforms::const_value(Quality::BluRayRemux),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -898,7 +897,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bremux\b").unwrap(),
-        transforms::value("REMUX"),
+        transforms::const_value(Quality::Remux),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -908,7 +907,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bBlu[ .-]*Ray\b(?![ .-]*Rip)").unwrap(),
-        transforms::value("BluRay"),
+        transforms::const_value(Quality::BluRay),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -918,7 +917,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bUHD[ .-]*Rip\b").unwrap(),
-        transforms::value("UHDRip"),
+        transforms::const_value(Quality::UHDRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -928,7 +927,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bHD[ .-]*Rip\b").unwrap(),
-        transforms::value("HDRip"),
+        transforms::const_value(Quality::HDRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -938,7 +937,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bMicro[ .-]*HD\b").unwrap(),
-        transforms::value("HDRip"),
+        transforms::const_value(Quality::HDRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -948,7 +947,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\b(?:BR|Blu[ .-]*Ray)[ .-]*Rip\b").unwrap(),
-        transforms::value("BRRip"),
+        transforms::const_value(Quality::BRRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -958,7 +957,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bBD[ .-]*Rip\b|\bBDR\b|\bBD-RM\b|[[(]BD[\]) .,-]").unwrap(),
-        transforms::value("BDRip"),
+        transforms::const_value(Quality::BDRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -968,7 +967,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\b(?:HD[ .-]*)?DVD[ .-]*Rip\b").unwrap(),
-        transforms::value("DVDRip"),
+        transforms::const_value(Quality::DVDRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -978,7 +977,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bVHS[ .-]*Rip?\b").unwrap(),
-        transforms::value("VHSRip"),
+        transforms::const_value(Quality::VHSRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -988,7 +987,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bDVD(?:R\d?|.*Mux)?\b").unwrap(),
-        transforms::value("DVD"),
+        transforms::const_value(Quality::DVD),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -998,7 +997,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bVHS\b").unwrap(),
-        transforms::value("VHS"),
+        transforms::const_value(Quality::VHS),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1008,7 +1007,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bPPVRip\b").unwrap(),
-        transforms::value("PPVRip"),
+        transforms::const_value(Quality::PPVRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1018,7 +1017,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bHD.?TV.?Rip\b").unwrap(),
-        transforms::value("HDTVRip"),
+        transforms::const_value(Quality::HDTVRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1028,7 +1027,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bHD.?TV\b").unwrap(),
-        transforms::value("HDTV"),
+        transforms::const_value(Quality::HDTV),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1038,7 +1037,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bDVB[ .-]*(?:Rip)?\b").unwrap(),
-        transforms::value("HDTV"),
+        transforms::const_value(Quality::HDTV),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1048,7 +1047,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bSAT[ .-]*Rips?\b").unwrap(),
-        transforms::value("SATRip"),
+        transforms::const_value(Quality::SATRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1058,7 +1057,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bTVRips?\b").unwrap(),
-        transforms::value("TVRip"),
+        transforms::const_value(Quality::TVRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1068,7 +1067,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bR5\b").unwrap(),
-        transforms::value("R5"),
+        transforms::const_value(Quality::R5),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1078,7 +1077,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\b(?:DL|WEB|BD|BR)MUX\b").unwrap(),
-        transforms::value("WEBMux"),
+        transforms::const_value(Quality::WebMux),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1088,7 +1087,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bWEB[ .-]*Rip\b").unwrap(),
-        transforms::value("WEBRip"),
+        transforms::const_value(Quality::WebRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1098,7 +1097,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bWEB[ .-]?DL[ .-]?Rip\b").unwrap(),
-        transforms::value("WEB-DLRip"),
+        transforms::const_value(Quality::WebDLRip),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1108,7 +1107,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bWEB[ .-]*(DL|.BDrip|.DLRIP)\b").unwrap(),
-        transforms::value("WEB-DL"),
+        transforms::const_value(Quality::WebDL),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1118,7 +1117,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\b(?<!\w.)WEB\b|\bWEB(?!([ \.\-\(\],]+\d))\b").unwrap(),
-        transforms::value("WEB"),
+        transforms::const_value(Quality::Web),
         RegexHandlerOptions {
             remove: true,
             skip_from_title: true,
@@ -1129,7 +1128,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\b(?:H[DQ][ .-]*)?CAM(?!.?(S|E|\()\d+)(?:H[DQ])?(?:[ .-]*Rip|Rp)?\b").unwrap(),
-        transforms::value("CAM"),
+        transforms::const_value(Quality::Cam),
         RegexHandlerOptions {
             remove: true,
             skip_from_title: true,
@@ -1140,7 +1139,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\b(?:H[DQ][ .-]*)?S[ \.\-]print").unwrap(),
-        transforms::value("CAM"),
+        transforms::const_value(Quality::Cam),
         RegexHandlerOptions {
             remove: true,
             skip_from_title: true,
@@ -1151,7 +1150,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "quality",
         |t| &mut t.quality,
         Regex::case_insensitive(r"\bPDTV\b").unwrap(),
-        transforms::value("PDTV"),
+        transforms::const_value(Quality::PDTV),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
