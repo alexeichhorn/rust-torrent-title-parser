@@ -1,4 +1,4 @@
-use torrent_title_parser::parse_title;
+use torrent_title_parser::{parse_title, Codec};
 
 #[test]
 fn test_parsed_output() {
@@ -19,7 +19,7 @@ fn test_basic_parsed() {
     assert_eq!(result.resolution, Some("1080p".to_string()));
     assert_eq!(result.year, Some(1999));
     assert_eq!(result.quality, Some("BluRay".to_string()));
-    assert_eq!(result.codec, Some("avc".to_string()));
+    assert_eq!(result.codec, Some(Codec::Avc));
 }
 
 #[test]

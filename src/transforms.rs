@@ -53,6 +53,10 @@ pub fn value(value: &'static str) -> impl Fn(&str, &Option<String>) -> Option<Op
     }
 }
 
+pub fn const_value<T: Clone>(value: T) -> impl Fn(&str, &Option<T>) -> Option<Option<T>> {
+    move |_, _| -> Option<Option<T>> { Some(Some(value.clone())) }
+}
+
 /// note: `$1` is replaced with the input value
 pub fn replace_value(value: &'static str) -> impl Fn(&str) -> String {
     move |input_value: &str| -> String {

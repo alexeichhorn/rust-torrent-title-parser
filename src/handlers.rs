@@ -4,7 +4,7 @@ use std::cmp::min;
 
 use crate::extensions::regex::RegexStringExt;
 use crate::handler_wrapper::{Handler, HandlerResult, Match, RegexHandlerOptions};
-use crate::{transforms, Language};
+use crate::{transforms, Codec, Language};
 use lazy_static::lazy_static;
 
 pub fn add_default_handlers(parser: &mut super::Parser) {
@@ -1295,7 +1295,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "codec",
         |t| &mut t.codec,
         Regex::case_insensitive(r"\b[hx][\. \-]?264\b").unwrap(),
-        transforms::value("avc"),
+        transforms::const_value(Codec::Avc),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1305,7 +1305,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "codec",
         |t| &mut t.codec,
         Regex::case_insensitive(r"\b[hx][\. \-]?265\b").unwrap(),
-        transforms::value("hevc"),
+        transforms::const_value(Codec::Hevc),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1315,7 +1315,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "codec",
         |t| &mut t.codec,
         Regex::case_insensitive(r"HEVC10(bit)?\b|\b[xh][\. \-]?265\b").unwrap(),
-        transforms::value("hevc"),
+        transforms::const_value(Codec::Hevc),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -1325,7 +1325,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "codec",
         |t| &mut t.codec,
         Regex::case_insensitive(r"\bhevc(?:\s?10)?\b").unwrap(),
-        transforms::value("hevc"),
+        transforms::const_value(Codec::Hevc),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
@@ -1336,7 +1336,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "codec",
         |t| &mut t.codec,
         Regex::case_insensitive(r"\bdivx|xvid\b").unwrap(),
-        transforms::value("xvid"),
+        transforms::const_value(Codec::Xvid),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
@@ -1347,7 +1347,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "codec",
         |t| &mut t.codec,
         Regex::case_insensitive(r"\bavc\b").unwrap(),
-        transforms::value("avc"),
+        transforms::const_value(Codec::Avc),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
@@ -1358,7 +1358,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "codec",
         |t| &mut t.codec,
         Regex::case_insensitive(r"\bav1\b").unwrap(),
-        transforms::value("av1"),
+        transforms::const_value(Codec::Av1),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
@@ -1369,23 +1369,13 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "codec",
         |t| &mut t.codec,
         Regex::case_insensitive(r"\b(?:mpe?g\d*)\b").unwrap(),
-        transforms::value("mpeg"),
+        transforms::const_value(Codec::Mpeg),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
             ..Default::default()
         },
     ));
-
-    lazy_static! {
-        static ref REMOVE_SPACE_AND_DASH: LiteRegex = LiteRegex::new(r"[ .-]+").unwrap();
-    }
-    parser.add_handler(Handler::new("codec", |context| {
-        if let Some(codec) = context.result.codec.clone() {
-            context.result.codec = Some(REMOVE_SPACE_AND_DASH.replace_all(&codec, "").to_string());
-        }
-        None
-    }));
 
     /*
     # Channels

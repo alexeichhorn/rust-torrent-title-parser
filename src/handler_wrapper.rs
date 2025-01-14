@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use lazy_static::lazy_static;
 use regress::Regex;
 
-use crate::{extensions::regex::RegexStringExt, ParsedTitle};
+use crate::{extensions::regex::RegexStringExt, Codec, ParsedTitle};
 
 #[derive(Debug)]
 pub struct Match {
@@ -208,6 +208,12 @@ impl TrimIfString for bool {
 
 impl TrimIfString for i32 {
     fn trim_if_string(self) -> i32 {
+        self
+    }
+}
+
+impl TrimIfString for Codec {
+    fn trim_if_string(self) -> Codec {
         self
     }
 }
