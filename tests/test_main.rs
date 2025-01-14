@@ -1,4 +1,4 @@
-use torrent_title_parser::{parse_title, Codec, Language, ParsedTitle, Quality};
+use torrent_title_parser::{parse_title, Codec, Language, Network, ParsedTitle, Quality};
 
 #[test]
 fn test_main_parsing() {
@@ -392,7 +392,7 @@ fn test_main_parsing() {
                 audio: vec!["Dolby Digital Plus".to_string()],
                 channels: vec!["5.1".to_string()],
                 codec: Some(Codec::Hevc),
-                network: Some("Amazon".to_string()),
+                network: Some(Network::Amazon),
                 ..Default::default()
             },
         ),
@@ -561,7 +561,7 @@ fn test_main_parsing() {
                 title: "Futurama".to_string(),
                 seasons: vec![8],
                 episodes: vec![3],
-                network: Some("Hulu".to_string()),
+                network: Some(Network::Hulu),
                 codec: Some(Codec::Avc),
                 container: Some("mkv".to_string()),
                 extension: Some("mkv".to_string()),
@@ -1022,7 +1022,7 @@ fn test_main_parsing() {
                 group: Some("XEBEC".to_string()),
                 container: Some("mkv".to_string()),
                 extension: Some("mkv".to_string()),
-                network: Some("Amazon".to_string()),
+                network: Some(Network::Amazon),
                 repack: true,
                 ..Default::default()
             },
@@ -1194,7 +1194,7 @@ fn test_main_parsing() {
                 episodes: vec![7],
                 resolution: Some("1080p".to_string()),
                 quality: Some(Quality::WebDL),
-                network: Some("Amazon".to_string()),
+                network: Some(Network::Amazon),
                 codec: Some(Codec::Avc),
                 dubbed: true,
                 audio: vec!["Dolby Digital Plus".to_string(), "Atmos".to_string()],
@@ -1224,7 +1224,7 @@ fn test_main_parsing() {
                 title: "The O C".to_string(),
                 seasons: vec![1, 2, 3, 4],
                 resolution: Some("1080p".to_string()),
-                network: Some("Amazon".to_string()),
+                network: Some(Network::Amazon),
                 codec: Some(Codec::Hevc),
                 bit_depth: Some("10bit".to_string()),
                 group: Some("Bearfish".to_string()),
@@ -1238,7 +1238,7 @@ fn test_main_parsing() {
                 year: Some(2022),
                 resolution: Some("2160p".to_string()),
                 quality: Some(Quality::WebDL),
-                network: Some("Netflix".to_string()),
+                network: Some(Network::Netflix),
                 codec: Some(Codec::Hevc),
                 container: Some("mkv".to_string()),
                 audio: vec!["Atmos".to_string(), "Dolby Digital Plus".to_string()],

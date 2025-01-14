@@ -8,7 +8,7 @@ mod transforms;
 mod types;
 
 pub use parser::Parser;
-pub use types::{Codec, Language, Quality};
+pub use types::{Codec, Language, Network, Quality};
 
 #[derive(Debug, Error)]
 pub enum ParserError {
@@ -59,7 +59,7 @@ pub struct ParsedTitle {
     pub is_3d: bool,
     pub extras: Vec<String>,
     pub size: Option<String>,
-    pub network: Option<String>,
+    pub network: Option<Network>,
     pub scene: bool,
 }
 

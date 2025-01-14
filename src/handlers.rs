@@ -3,7 +3,7 @@ use std::cmp::min;
 
 use crate::extensions::regex::RegexStringExt;
 use crate::handler_wrapper::{Handler, HandlerResult, Match, RegexHandlerOptions};
-use crate::{transforms, Codec, Language, Quality};
+use crate::{transforms, Codec, Language, Network, Quality};
 use lazy_static::lazy_static;
 
 pub fn add_default_handlers(parser: &mut super::Parser) {
@@ -4372,7 +4372,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bATVP?\b").unwrap(),
-        transforms::value("Apple TV"),
+        transforms::const_value(Network::AppleTV),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4382,7 +4382,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bAMZN\b").unwrap(),
-        transforms::value("Amazon"),
+        transforms::const_value(Network::Amazon),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4392,7 +4392,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bNF|Netflix\b").unwrap(),
-        transforms::value("Netflix"),
+        transforms::const_value(Network::Netflix),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4402,7 +4402,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bNICK(elodeon)?\b").unwrap(),
-        transforms::value("Nickelodeon"),
+        transforms::const_value(Network::Nickelodeon),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4412,7 +4412,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bDSNY?P?\b").unwrap(),
-        transforms::value("Disney"),
+        transforms::const_value(Network::Disney),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4422,7 +4422,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bH(MAX|BO)\b").unwrap(),
-        transforms::value("HBO"),
+        transforms::const_value(Network::HBO),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4432,7 +4432,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bHULU\b").unwrap(),
-        transforms::value("Hulu"),
+        transforms::const_value(Network::Hulu),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4442,7 +4442,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bCBS\b").unwrap(),
-        transforms::value("CBS"),
+        transforms::const_value(Network::CBS),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4452,7 +4452,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bNBC\b").unwrap(),
-        transforms::value("NBC"),
+        transforms::const_value(Network::NBC),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4462,7 +4462,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bAMC\b").unwrap(),
-        transforms::value("AMC"),
+        transforms::const_value(Network::AMC),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4472,7 +4472,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bPBS\b").unwrap(),
-        transforms::value("PBS"),
+        transforms::const_value(Network::PBS),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4482,7 +4482,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\b(Crunchyroll|[. -]CR[. -])\b").unwrap(),
-        transforms::value("Crunchyroll"),
+        transforms::const_value(Network::Crunchyroll),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4492,7 +4492,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bVICE\b").unwrap(),
-        transforms::value("VICE"),
+        transforms::const_value(Network::VICE),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4502,7 +4502,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bSony\b").unwrap(),
-        transforms::value("Sony"),
+        transforms::const_value(Network::Sony),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4512,7 +4512,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bHallmark\b").unwrap(),
-        transforms::value("Hallmark"),
+        transforms::const_value(Network::Hallmark),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4522,7 +4522,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bAdult.?Swim\b").unwrap(),
-        transforms::value("Adult Swim"),
+        transforms::const_value(Network::AdultSwim),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
@@ -4532,7 +4532,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "network",
         |r| &mut r.network,
         Regex::case_insensitive(r"\bAnimal.?Planet|ANPL\b").unwrap(),
-        transforms::value("Animal Planet"),
+        transforms::const_value(Network::AnimalPlanet),
         RegexHandlerOptions {
             remove: true,
             ..Default::default()
