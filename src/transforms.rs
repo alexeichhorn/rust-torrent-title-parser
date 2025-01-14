@@ -104,6 +104,7 @@ pub fn date_from_format(format: &'static str) -> impl Fn(&str, &Option<String>) 
         let sanitized = SANITIZER_REGEX.replace_all(input_value, " ").trim().to_string();
         let sanitized = convert_months(&sanitized);
 
+        #[cfg(feature = "debug")]
         println!("input_value: '{}' sanitized: '{}' for format: '{}'", input_value, sanitized, format);
 
         let date = NaiveDate::parse_from_str(&sanitized, format).ok()?;

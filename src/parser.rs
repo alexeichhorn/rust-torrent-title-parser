@@ -131,7 +131,9 @@ impl Parser {
                 // end_of_title: &mut end_of_title,
             });
 
+            #[cfg(feature = "debug")]
             println!("match result for {}: {:?}", handler.get_name(), match_result);
+            #[cfg(feature = "debug")]
             println!("title: {}", title);
 
             let Some(match_result) = match_result else {
