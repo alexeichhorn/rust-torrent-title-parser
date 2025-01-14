@@ -5,8 +5,10 @@ mod handler_wrapper;
 mod handlers;
 mod parser;
 mod transforms;
+mod types;
 
 pub use parser::Parser;
+pub use types::*;
 
 #[derive(Debug, Error)]
 pub enum ParserError {
@@ -47,7 +49,7 @@ pub struct ParsedTitle {
     pub episodes: Vec<i32>,
     pub episode_code: Option<String>,
     pub complete: bool,
-    pub languages: Vec<String>,
+    pub languages: Vec<Language>,
     pub dubbed: bool,
     pub site: Option<String>,
     pub extension: Option<String>,

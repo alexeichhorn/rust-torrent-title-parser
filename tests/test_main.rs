@@ -1,4 +1,4 @@
-use torrent_title_parser::{parse_title, ParsedTitle};
+use torrent_title_parser::{parse_title, Language, ParsedTitle};
 
 #[test]
 fn test_main_parsing() {
@@ -21,7 +21,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Color Of Night".to_string(),
                 unrated: true,
-                languages: vec!["fr".to_string()],
+                languages: vec![Language::French],
                 quality: Some("BRRip".to_string()),
                 codec: Some("avc".to_string()),
                 ..Default::default()
@@ -115,7 +115,7 @@ fn test_main_parsing() {
                 year: Some(1990),
                 audio: vec!["DTS Lossy".to_string()],
                 resolution: Some("1080p".to_string()),
-                languages: vec!["fr".to_string()],
+                languages: vec![Language::French],
                 codec: Some("hevc".to_string()),
                 group: Some("HTG".to_string()),
                 ..Default::default()
@@ -167,7 +167,7 @@ fn test_main_parsing() {
                 title: "You".to_string(),
                 edition: Some("Uncut".to_string()),
                 seasons: vec![1],
-                languages: vec!["sv".to_string()],
+                languages: vec![Language::Swedish],
                 resolution: Some("1080p".to_string()),
                 codec: Some("avc".to_string()),
                 group: Some("Justiso".to_string()),
@@ -211,7 +211,7 @@ fn test_main_parsing() {
                 resolution: Some("1080p".to_string()),
                 codec: Some("avc".to_string()),
                 audio: vec!["AAC".to_string()],
-                languages: vec!["zh".to_string()],
+                languages: vec![Language::Chinese],
                 trash: true,
                 ..Default::default()
             },
@@ -225,7 +225,7 @@ fn test_main_parsing() {
                 resolution: Some("1080p".to_string()),
                 codec: Some("avc".to_string()),
                 group: Some("GM-Team".to_string()),
-                languages: vec!["zh".to_string()],
+                languages: vec![Language::Chinese],
                 ..Default::default()
             },
         ),
@@ -236,7 +236,7 @@ fn test_main_parsing() {
                 year: Some(2017),
                 seasons: vec![4],
                 episodes: vec![1, 2, 3, 4, 5, 6],
-                languages: vec!["en".to_string(), "ru".to_string()],
+                languages: vec![Language::English, Language::Russian],
                 resolution: Some("1080p".to_string()),
                 quality: Some("WEBRip".to_string()),
                 subbed: true,
@@ -276,7 +276,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "The Fast and the Furious: Tokyo Drift".to_string(),
                 quality: Some("DVDRip".to_string()),
-                languages: vec!["it".to_string()],
+                languages: vec![Language::Italian],
                 ..Default::default()
             },
         ),
@@ -288,7 +288,7 @@ fn test_main_parsing() {
                 resolution: Some("720p".to_string()),
                 quality: Some("BRRip".to_string()),
                 audio: vec!["AC3".to_string()],
-                languages: vec!["en".to_string(), "it".to_string()],
+                languages: vec![Language::English, Language::Italian],
                 group: Some("LIFE".to_string()),
                 subbed: true,
                 ..Default::default()
@@ -299,7 +299,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Soul Land".to_string(),
                 episodes: vec![121, 122, 123, 124, 125],
-                languages: vec!["en".to_string(), "zh".to_string()],
+                languages: vec![Language::English, Language::Chinese],
                 resolution: Some("1080p".to_string()),
                 quality: Some("WEB-DL".to_string()),
                 subbed: true,
@@ -321,7 +321,7 @@ fn test_main_parsing() {
                 title: "Heidi".to_string(),
                 episodes: vec![3],
                 quality: Some("DVDRip".to_string()),
-                languages: vec!["la".to_string()],
+                languages: vec![Language::LatinAmericanSpanish],
                 ..Default::default()
             },
         ),
@@ -332,7 +332,7 @@ fn test_main_parsing() {
                 seasons: vec![19],
                 container: Some("avi".to_string()),
                 extension: Some("avi".to_string()),
-                languages: vec!["es".to_string()],
+                languages: vec![Language::Spanish],
                 quality: Some("HDTV".to_string()),
                 site: Some("www.AtomoHD.nu".to_string()),
                 ..Default::default()
@@ -385,7 +385,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Madame Web".to_string(),
                 year: Some(2024),
-                languages: vec!["en".to_string(), "hi".to_string()],
+                languages: vec![Language::English, Language::Hindi],
                 quality: Some("WEBRip".to_string()),
                 resolution: Some("1080p".to_string()),
                 bit_depth: Some("10bit".to_string()),
@@ -442,7 +442,7 @@ fn test_main_parsing() {
                 title: "One Piece".to_string(),
                 seasons: vec![1],
                 episodes: vec![1056],
-                languages: vec!["fr".to_string()],
+                languages: vec![Language::French],
                 container: Some("mkv".to_string()),
                 resolution: Some("1080p".to_string()),
                 scene: true,
@@ -505,7 +505,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "The Great Indian Suicide".to_string(),
                 year: Some(2023),
-                languages: vec!["en".to_string(), "ta".to_string()],
+                languages: vec![Language::English, Language::Tamil],
                 quality: Some("WEB-DL".to_string()),
                 resolution: Some("2160p".to_string()),
                 hdr: vec!["SDR".to_string()],
@@ -525,7 +525,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Khel Khel Mein".to_string(),
                 year: Some(2024),
-                languages: vec!["hi".to_string()],
+                languages: vec![Language::Hindi],
                 quality: Some("SCR".to_string()),
                 codec: Some("avc".to_string()),
                 audio: vec!["AAC".to_string()],
@@ -544,7 +544,7 @@ fn test_main_parsing() {
                 title: "Memorist".to_string(),
                 seasons: vec![1],
                 episodes: vec![1],
-                languages: vec!["zh".to_string()],
+                languages: vec![Language::Chinese],
                 quality: Some("WEB-DL".to_string()),
                 codec: Some("hevc".to_string()),
                 audio: vec!["AAC".to_string()],
@@ -593,7 +593,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Love, Death & Robots".to_string(),
                 seasons: vec![1],
-                languages: vec!["es".to_string()],
+                languages: vec![Language::Spanish],
                 resolution: Some("1080p".to_string()),
                 year: Some(2019),
                 complete: true,
@@ -607,7 +607,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Bikram Yogi, Guru, Predator".to_string(),
                 year: Some(2019),
-                languages: vec!["en".to_string(), "hi".to_string()],
+                languages: vec![Language::English, Language::Hindi],
                 quality: Some("WEB-DL".to_string()),
                 resolution: Some("720p".to_string()),
                 codec: Some("avc".to_string()),
@@ -657,7 +657,7 @@ fn test_main_parsing() {
                 quality: Some("TeleSync".to_string()),
                 container: Some("mkv".to_string()),
                 extension: Some("mkv".to_string()),
-                languages: vec!["ru".to_string()],
+                languages: vec![Language::Russian],
                 trash: true,
                 ..Default::default()
             },
@@ -726,7 +726,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Saw 3D".to_string(),
                 year: Some(2010),
-                languages: vec!["en".to_string(), "it".to_string()],
+                languages: vec![Language::English, Language::Italian],
                 resolution: Some("1080p".to_string()),
                 quality: Some("BluRay".to_string()),
                 codec: Some("hevc".to_string()),
@@ -859,7 +859,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "TRON: Legacy".to_string(),
                 year: Some(2010),
-                languages: vec!["ru".to_string()],
+                languages: vec![Language::Russian],
                 resolution: Some("1080p".to_string()),
                 quality: Some("WEB-DL".to_string()),
                 ..Default::default()
@@ -883,7 +883,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Guardians of the Galaxy Vol. 3".to_string(),
                 year: Some(2023),
-                languages: vec!["en".to_string(), "hi".to_string(), "te".to_string(), "ta".to_string(), "ml".to_string()],
+                languages: vec![Language::English, Language::Hindi, Language::Telugu, Language::Tamil, Language::Malayalam],
                 quality: Some("BDRip".to_string()),
                 codec: Some("hevc".to_string()),
                 audio: vec!["Dolby Digital Plus".to_string()],
@@ -903,7 +903,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "高清影视之家发布".to_string(),
                 year: Some(2023),
-                languages: vec!["zh".to_string()],
+                languages: vec![Language::Chinese],
                 quality: Some("WEB-DL".to_string()),
                 codec: Some("hevc".to_string()),
                 audio: vec!["Dolby Digital Plus".to_string()],
@@ -921,7 +921,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Venom".to_string(),
                 year: Some(2018),
-                languages: vec!["hi".to_string()],
+                languages: vec![Language::Hindi],
                 quality: Some("TeleSync".to_string()),
                 resolution: Some("720p".to_string()),
                 codec: Some("avc".to_string()),
@@ -938,7 +938,7 @@ fn test_main_parsing() {
                 year: Some(2021),
                 seasons: vec![1],
                 episodes: vec![1, 2, 3, 4, 5, 6, 7, 8],
-                languages: vec!["hi".to_string(), "te".to_string(), "ta".to_string()],
+                languages: vec![Language::Hindi, Language::Telugu, Language::Tamil],
                 quality: Some("HDRip".to_string()),
                 resolution: Some("720p".to_string()),
                 codec: Some("avc".to_string()),
@@ -956,7 +956,7 @@ fn test_main_parsing() {
                 title: "The Walking Dead".to_string(),
                 seasons: vec![6],
                 episodes: vec![7],
-                languages: vec!["fr".to_string()],
+                languages: vec![Language::French],
                 quality: Some("HDTV".to_string()),
                 codec: Some("avc".to_string()),
                 group: Some("AMB3R".to_string()),
@@ -983,7 +983,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Shang-Chi".to_string(),
                 year: Some(2021),
-                languages: vec!["en".to_string(), "hi".to_string(), "te".to_string(), "ta".to_string()],
+                languages: vec![Language::English, Language::Hindi, Language::Telugu, Language::Tamil],
                 quality: Some("BDRip".to_string()),
                 resolution: Some("720p".to_string()),
                 codec: Some("avc".to_string()),
@@ -1001,7 +1001,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Game of Thrones".to_string(),
                 seasons: vec![1, 2, 3, 4, 5, 6, 7, 8],
-                languages: vec!["es".to_string()],
+                languages: vec![Language::Spanish],
                 resolution: Some("1080p".to_string()),
                 quality: Some("BluRay".to_string()),
                 complete: true,
@@ -1049,7 +1049,7 @@ fn test_main_parsing() {
                 year: Some(2022),
                 seasons: vec![1],
                 episodes: vec![1, 2, 3, 4, 5, 6, 7, 8],
-                languages: vec!["ru".to_string()],
+                languages: vec![Language::Russian],
                 quality: Some("WEB-DL".to_string()),
                 ..Default::default()
             },
@@ -1059,7 +1059,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Successor".to_string(),
                 year: Some(2024),
-                languages: vec!["zh".to_string()],
+                languages: vec![Language::Chinese],
                 resolution: Some("1080p".to_string()),
                 quality: Some("TeleCine".to_string()),
                 trash: true,
@@ -1122,7 +1122,7 @@ fn test_main_parsing() {
             ParsedTitle {
                 title: "Adbhut".to_string(),
                 year: Some(2024),
-                languages: vec!["hi".to_string()],
+                languages: vec![Language::Hindi],
                 resolution: Some("1080p".to_string()),
                 quality: Some("HDTVRip".to_string()),
                 codec: Some("avc".to_string()),
@@ -1209,7 +1209,7 @@ fn test_main_parsing() {
                 title: "The Penguin".to_string(),
                 seasons: vec![1],
                 episodes: vec![7],
-                languages: vec!["fr".to_string()],
+                languages: vec![Language::French],
                 quality: Some("WEBRip".to_string()),
                 codec: Some("avc".to_string()),
                 site: Some("Torrent911.my".to_string()),

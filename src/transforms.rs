@@ -62,6 +62,10 @@ pub fn replace_value(value: &'static str) -> impl Fn(&str) -> String {
     }
 }
 
+pub fn replace_with_value<T: Clone>(value: T) -> impl Fn(&str) -> T {
+    move |_| -> T { value.clone() }
+}
+
 fn convert_months(date_str: &str) -> String {
     let mut result = date_str.to_string();
 
@@ -123,12 +127,13 @@ pub fn date_from_formats(formats: &'static [&'static str]) -> impl Fn(&str, &Opt
     }
 }
 
-pub fn uniq_concat(value: &str, result: &Vec<String>) -> Option<Vec<String>> {
+pub fn uniq_concat<T: Clone + PartialEq>(value: impl Into<T>, result: &Vec<T>) -> Option<Vec<T>> {
     let mut result = result.clone();
-    if result.contains(&value.to_string()) {
+    let value: T = value.into();
+    if result.contains(&value) {
         return Some(result);
     }
-    result.push(value.to_string());
+    result.push(value);
     Some(result)
 }
 
@@ -181,12 +186,12 @@ pub fn range_func(value: &str, _: &Vec<i32>) -> Option<Vec<i32>> {
 pub fn chain_transforms<T, F1, F2, R1>(transform1: F1, transform2: F2) -> impl Fn(&str, &T) -> Option<T>
 where
     F1: Fn(&str) -> R1,
-    F2: Fn(&str, &T) -> Option<T>,
-    R1: AsRef<str>,
+    F2: Fn(R1, &T) -> Option<T>,
+    R1: Clone,
 {
     move |value: &str, state: &T| {
         let intermediate = transform1(value);
-        transform2(intermediate.as_ref(), state)
+        transform2(intermediate, state)
     }
 }
 

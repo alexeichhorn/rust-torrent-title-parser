@@ -4,7 +4,7 @@ use std::cmp::min;
 
 use crate::extensions::regex::RegexStringExt;
 use crate::handler_wrapper::{Handler, HandlerResult, Match, RegexHandlerOptions};
-use crate::transforms;
+use crate::{transforms, Language};
 use lazy_static::lazy_static;
 
 pub fn add_default_handlers(parser: &mut super::Parser) {
@@ -1774,7 +1774,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |t| &mut t.languages,
         Regex::case_insensitive(r"\b(temporadas?|completa)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Spanish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2532,7 +2532,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bengl?(?:sub[A-Z]*)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::English), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2543,7 +2543,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\beng?sub[A-Z]*\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::English), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2554,7 +2554,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bing(?:l[eéê]s)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::English), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2565,7 +2565,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\besub\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::English), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
@@ -2577,7 +2577,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\benglish\W+(?:subs?|sdh|hi)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::English), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2588,7 +2588,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\beng?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::English), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -2600,7 +2600,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\benglish?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("en"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::English), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -2612,7 +2612,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:JP|JAP|JPN)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ja"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Japanese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2636,7 +2636,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(japanese|japon[eê]s)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ja"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Japanese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -2648,7 +2648,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:KOR|kor[ .-]?sub)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ko"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Korean), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2659,7 +2659,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(korean|coreano)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ko"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Korean), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -2671,7 +2671,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:traditional\W*chinese|chinese\W*traditional)(?:\Wchi)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Chinese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             remove: true,
@@ -2683,7 +2683,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bzh-hant\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Chinese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2694,7 +2694,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:mand[ae]rin|ch[sn])\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Chinese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2705,7 +2705,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"(?<!shang-?)\bCH(?:I|T)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Chinese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -2717,7 +2717,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(chinese|chin[eê]s)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Chinese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -2729,7 +2729,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bzh-hans\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Chinese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2740,7 +2740,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bFR(?:ench|a|e|anc[eê]s)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("fr"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::French), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2765,7 +2765,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(VOST(?:FR?|A)?)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("fr"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::French), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2776,7 +2776,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(VF[FQIB2]?|(TRUE|SUB)?.?FRENCH|(VOST)?FR2?)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("fr"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::French), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
@@ -2788,7 +2788,10 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bspanish\W?latin|american\W*(?:spa|esp?)").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("la"), transforms::uniq_concat),
+        transforms::chain_transforms(
+            transforms::replace_with_value(Language::LatinAmericanSpanish),
+            transforms::uniq_concat,
+        ),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -2801,7 +2804,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:\bla\b.+(?:cia\b))").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Spanish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -2813,7 +2816,10 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:audio.)?lat(?:in?|ino)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("la"), transforms::uniq_concat),
+        transforms::chain_transforms(
+            transforms::replace_with_value(Language::LatinAmericanSpanish),
+            transforms::uniq_concat,
+        ),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2824,7 +2830,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:audio.)?(?:ESP?|spa|(en[ .]+)?espa[nñ]ola?|castellano)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Spanish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2835,7 +2841,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bes(?=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Spanish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -2847,7 +2853,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?<=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})es\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Spanish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -2859,7 +2865,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?<=[ .,/-]+[A-Z]{2}[ .,/-]+)es(?=[ .,/-]+[A-Z]{2}[ .,/-]+)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Spanish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -2871,7 +2877,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bes(?=\.(?:ass|ssa|srt|sub|idx)$)").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Spanish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -2883,7 +2889,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bspanish\W+subs?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Spanish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2907,7 +2913,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(spanish|espanhol)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("es"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Spanish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -2919,7 +2925,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:p[rt]|en|port)[. (\\/-]*BR\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Portuguese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             remove: true,
@@ -2931,7 +2937,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bbr(?:a|azil|azilian)\W+(?:pt|por)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Portuguese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             remove: true,
@@ -2943,7 +2949,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:leg(?:endado|endas?)?|dub(?:lado)?|portugu[eèê]se?)[. -]*BR\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Portuguese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2954,7 +2960,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bleg(?:endado|endas?)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Portuguese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2965,7 +2971,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bportugu[eèê]s[ea]?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Portuguese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2976,7 +2982,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bPT[. -]*(?:PT|ENG?|sub(?:s|titles?))\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Portuguese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -2987,7 +2993,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bpt(?=\.(?:ass|ssa|srt|sub|idx)$)").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Portuguese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -2999,7 +3005,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bpor\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pt"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Portuguese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3011,7 +3017,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b-?ITA\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("it"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Italian), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
@@ -3037,7 +3043,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::new(r"\b(?<!w{3}\.\w+\.)IT(?=[ .,/-]+(?:[a-zA-Z]{2}[ .,/-]+){2,})\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("it"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Italian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3049,7 +3055,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bit(?=\.(?:ass|ssa|srt|sub|idx)$)").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("it"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Italian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3061,7 +3067,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bitaliano?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("it"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Italian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3073,7 +3079,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bgreek[ .-]*(?:audio|lang(?:uage)?|subs?(?:titles?)?)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("el"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Greek), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3085,7 +3091,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:GER|DEU)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::German), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3097,7 +3103,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bde(?=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::German), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3109,7 +3115,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?<=[ .,/-]+(?:[A-Z]{2}[ .,/-]+){2,})de\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::German), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3121,7 +3127,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?<=[ .,/-]+[A-Z]{2}[ .,/-]+)de(?=[ .,/-]+[A-Z]{2}[ .,/-]+)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::German), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3133,7 +3139,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bde(?=\.(?:ass|ssa|srt|sub|idx)$)").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::German), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3145,7 +3151,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(german|alem[aã]o)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("de"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::German), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3157,7 +3163,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bRUS?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ru"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Russian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3184,7 +3190,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(russian|russo)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ru"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Russian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3196,7 +3202,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bUKR\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("uk"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Ukrainian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3207,7 +3213,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bukrainian\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("uk"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Ukrainian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3219,7 +3225,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bhin(?:di)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("hi"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Hindi), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3230,7 +3236,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)tel(?!\W*aviv)|telugu)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("te"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Telugu), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
@@ -3242,7 +3248,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bt[aâ]m(?:il)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ta"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Tamil), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
@@ -3254,7 +3260,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)MAL(?:ay)?|malayalam)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ml"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Malayalam), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: true,
             skip_if_first: true,
@@ -3267,7 +3273,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)KAN(?:nada)?|kannada)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("kn"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Kannada), transforms::uniq_concat),
         RegexHandlerOptions {
             remove: true,
             skip_if_already_found: false,
@@ -3279,7 +3285,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)MAR(?:a(?:thi)?)?|marathi)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("mr"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Marathi), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3290,7 +3296,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)GUJ(?:arati)?|gujarati)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("gu"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Gujarati), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3301,7 +3307,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)PUN(?:jabi)?|punjabi)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pa"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Punjabi), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3312,7 +3318,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)BEN(?!.\bThe|and|of\b)(?:gali)?|bengali)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("bn"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Bengali), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3324,7 +3330,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::new(r"\b(?<!YTS\.)LT\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("lt"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Lithuanian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3352,7 +3358,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\blithuanian\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("lt"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Lithuanian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3364,7 +3370,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\blatvian\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("lv"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Latvian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3376,7 +3382,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bestonian\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("et"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Estonian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3388,7 +3394,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)PL|pol)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pl"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Polish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3399,7 +3405,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(polish|polon[eê]s|polaco)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("pl"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Polish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3411,7 +3417,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bCZ[EH]?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("cs"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Czech), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3423,7 +3429,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bczech\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("cs"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Czech), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3435,7 +3441,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bslo(?:vak|vakian|subs|[\]_)]?\.\w{2,4}$)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("sk"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Slovak), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3447,7 +3453,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::new(r"\bHU\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("hu"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Hungarian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3459,7 +3465,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bHUN(?:garian)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("hu"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Hungarian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3471,7 +3477,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bROM(?:anian)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ro"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Romanian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3483,7 +3489,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bRO(?=[ .,/-]*(?:[A-Z]{2}[ .,/-]+)*sub)").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ro"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Romanian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3494,7 +3500,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bbul(?:garian)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("bg"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Bulgarian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3521,7 +3527,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:srp|serbian)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("sr"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Serbian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3532,7 +3538,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:HRV|croatian)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("hr"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Croatian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3543,7 +3549,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bHR(?=[ .,/-]*(?:[A-Z]{2}[ .,/-]+)*sub)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("hr"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Croatian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3554,7 +3560,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bslovenian\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("sl"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Slovenian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3566,7 +3572,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)NL|dut|holand[eê]s)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("nl"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Dutch), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3577,7 +3583,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bdutch\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("nl"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Dutch), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3589,7 +3595,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bflemish\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("nl"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Dutch), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3600,7 +3606,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:DK|danska|dansub|nordic)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("da"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Danish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3611,7 +3617,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(danish|dinamarqu[eê]s)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("da"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Danish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3623,7 +3629,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bdan\b(?=.*\.(?:srt|vtt|ssa|ass|sub|idx)$)").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("da"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Danish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3635,7 +3641,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)FI|finsk|finsub|nordic)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("fi"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Finnish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3646,7 +3652,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bfinnish\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("fi"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Finnish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3670,7 +3676,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:(?<!w{3}\.\w+\.)SE|swe|swesubs?|sv(?:ensk)?|nordic)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("sv"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Swedish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3681,7 +3687,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(swedish|sueco)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("sv"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Swedish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3693,7 +3699,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:NOR|norsk|norsub|nordic)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("no"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Norwegian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_already_found: false,
             ..Default::default()
@@ -3704,7 +3710,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(norwegian|noruegu[eê]s|bokm[aå]l|nob|nor(?=[\]_)]?\.\w{2,4}$))\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("no"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Norwegian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3716,7 +3722,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:arabic|[aá]rabe|ara)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ar"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Arabic), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3728,7 +3734,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\barab.*(?:audio|lang(?:uage)?|sub(?:s|titles?)?)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ar"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Arabic), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3740,7 +3746,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bar(?=\.(?:ass|ssa|srt|sub|idx)$)").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ar"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Arabic), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3752,7 +3758,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:turkish|tur(?:co)?)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("tr"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Turkish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3764,7 +3770,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(TİVİBU|tivibu|bitturk(.net)?|turktorrent)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("tr"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Turkish), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3786,7 +3792,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bvietnamese\b|\bvie(?=[\]_)]?\.\w{2,4}$)").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("vi"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Vietnamese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3798,7 +3804,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bind(?:onesian)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("id"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Indonesian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3810,7 +3816,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(thai|tailand[eê]s)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("th"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Thai), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3822,7 +3828,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::new(r"\b(THA|tha)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("th"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Thai), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3834,7 +3840,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(?:malay|may(?=[\]_)]?\.\w{2,4}$)|(?<=subs?\([a-z,]+)may)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("ms"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Malay), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_if_first: true,
             skip_if_already_found: false,
@@ -3846,7 +3852,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\bheb(?:rew|raico)?\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("he"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Hebrew), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3858,7 +3864,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"\b(persian|persa)\b").unwrap(),
-        transforms::chain_transforms(transforms::replace_value("fa"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Persian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3887,7 +3893,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u3040-\u30ff]+").unwrap(), // japanese
-        transforms::chain_transforms(transforms::replace_value("ja"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Japanese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3898,7 +3904,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u3400-\u4dbf]+").unwrap(), // chinese
-        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Chinese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3909,7 +3915,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u4e00-\u9fff]+").unwrap(), // chinese
-        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Chinese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3920,7 +3926,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\uf900-\ufaff]+").unwrap(), // chinese
-        transforms::chain_transforms(transforms::replace_value("zh"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Chinese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3931,7 +3937,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\uff66-\uff9f]+").unwrap(), // japanese
-        transforms::chain_transforms(transforms::replace_value("ja"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Japanese), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3942,7 +3948,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u0400-\u04ff]+").unwrap(), // russian
-        transforms::chain_transforms(transforms::replace_value("ru"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Russian), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3953,7 +3959,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u0600-\u06ff]+").unwrap(), // arabic
-        transforms::chain_transforms(transforms::replace_value("ar"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Arabic), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3964,7 +3970,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u0750-\u077f]+").unwrap(), // arabic
-        transforms::chain_transforms(transforms::replace_value("ar"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Arabic), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3975,7 +3981,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u0c80-\u0cff]+").unwrap(), // kannada
-        transforms::chain_transforms(transforms::replace_value("kn"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Kannada), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3986,7 +3992,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u0d00-\u0d7f]+").unwrap(), // malayalam
-        transforms::chain_transforms(transforms::replace_value("ml"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Malayalam), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -3997,7 +4003,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u0e00-\u0e7f]+").unwrap(), // thai
-        transforms::chain_transforms(transforms::replace_value("th"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Thai), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -4008,7 +4014,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u0900-\u097f]+").unwrap(), // hindi
-        transforms::chain_transforms(transforms::replace_value("hi"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Hindi), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -4019,7 +4025,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u0980-\u09ff]+").unwrap(), // bengali
-        transforms::chain_transforms(transforms::replace_value("bn"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Bengali), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -4030,7 +4036,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
         "languages",
         |r| &mut r.languages,
         Regex::case_insensitive(r"[\u0a00-\u0a7f]+").unwrap(), // gujarati
-        transforms::chain_transforms(transforms::replace_value("gu"), transforms::uniq_concat),
+        transforms::chain_transforms(transforms::replace_with_value(Language::Gujarati), transforms::uniq_concat),
         RegexHandlerOptions {
             skip_from_title: true,
             skip_if_already_found: false,
@@ -4059,7 +4065,12 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
     }
 
     parser.add_handler(Handler::new("languages", |context| {
-        if !context.result.languages.iter().any(|lang| lang == "pt" || lang == "es") {
+        if !context
+            .result
+            .languages
+            .iter()
+            .any(|lang| lang == &Language::Portuguese || lang == &Language::Spanish)
+        {
             // Checking if episode naming convention suggests Portuguese language
             if (context
                 .matched
@@ -4069,7 +4080,7 @@ pub fn add_default_handlers(parser: &mut super::Parser) {
                 .unwrap_or(false))
                 || PT_LANG_RE2.contains_match(&context.title)
             {
-                context.result.languages.push("pt".to_string());
+                context.result.languages.push(Language::Portuguese);
             }
         }
         None
